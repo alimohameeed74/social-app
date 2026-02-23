@@ -1,0 +1,8 @@
+.main-layout {
+  padding-top: 72px;
+}
+@media (min-width: 768px) {
+  .main-layout {
+    padding-top: 60px;
+  }
+}

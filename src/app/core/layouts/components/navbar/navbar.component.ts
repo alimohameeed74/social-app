@@ -6,6 +6,7 @@ import { initFlowbite } from 'flowbite';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
+  imports: [],
 })
 export class NavbarComponent implements OnInit {
   constructor(private flowbiteService: FlowbiteService) {}

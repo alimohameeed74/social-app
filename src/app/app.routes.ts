@@ -9,13 +9,19 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadComponent: () =>
-      import('../app/core/auth/pages/login/login.component').then((c) => c.LoginComponent),
-    title: 'Login',
+      import('./core/layouts/auth-layout/auth-layout.component').then((c) => c.AuthLayoutComponent),
+    loadChildren: () => import('./core/auth/auth.routes').then((f) => f.routes),
+  },
+  {
+    path: 'main',
+    loadComponent: () =>
+      import('./core/layouts/main-layout/main-layout.component').then((c) => c.MainLayoutComponent),
+    loadChildren: () => import('./features/main.routes').then((f) => f.routes),
   },
   {
     path: '404',
     loadComponent: () =>
-      import('../app/core/layouts/components/not-found/not-found.component').then(
+      import('./core/layouts/components/not-found/not-found.component').then(
         (c) => c.NotFoundComponent,
       ),
     title: '404',
