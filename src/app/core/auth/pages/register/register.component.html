@@ -12,7 +12,6 @@
           formControlName="name"
           class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
           placeholder=""
-          required
         />
         <label
           for="name"
@@ -28,7 +27,6 @@
           formControlName="username"
           class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
           placeholder=" "
-          required
         />
         <label
           for="username"
@@ -44,7 +42,6 @@
           formControlName="email"
           class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
           placeholder=" "
-          required
         />
         <label
           for="email"
@@ -72,7 +69,6 @@
           placeholder=" "
           min="1950-01-01"
           [max]="maxDate"
-          required
         />
       </div>
 
@@ -84,7 +80,6 @@
           formControlName="password"
           class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
           placeholder=" "
-          required
         />
         <label
           for="password"
@@ -100,7 +95,6 @@
           formControlName="rePassword"
           class="block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
           placeholder=" "
-          required
         />
         <label
           for="rePassword"
@@ -118,7 +112,7 @@
         </button>
         <button
           (click)="ClearForm()"
-          type="reset"
+          type="button"
           class="text-gray-700 bg-gray-200 box-border border border-transparent hover:bg-gray-700 hover:text-white focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
         >
           Cencel
