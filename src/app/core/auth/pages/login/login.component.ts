@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  hidePassword: boolean;
   constructor() {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -18,6 +19,7 @@ export class LoginComponent implements OnInit {
         Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
       ]),
     });
+    this.hidePassword = true;
   }
   Login() {
     console.log(this.loginForm.value);
@@ -29,6 +31,10 @@ export class LoginComponent implements OnInit {
       email: '',
       password: '',
     });
+    this.hidePassword = true;
+  }
+  showPassword() {
+    this.hidePassword = !this.hidePassword;
   }
 
   ngOnInit() {}

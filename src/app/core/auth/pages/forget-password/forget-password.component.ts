@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LoaderComponent } from '../../../layouts/components/loader/loader.component';
 
 @Component({
   selector: 'app-forget-password',
@@ -10,11 +9,15 @@ import { LoaderComponent } from '../../../layouts/components/loader/loader.compo
 })
 export class ForgetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
+  hidePassword: boolean;
+  hideNewPassword: boolean;
   constructor() {
     this.resetPasswordForm = new FormGroup({
       password: new FormControl('', Validators.required),
       newPassword: new FormControl('', Validators.required),
     });
+    this.hidePassword = true;
+    this.hideNewPassword = true;
   }
   resetPassword() {
     console.log(this.resetPasswordForm.value);
@@ -25,6 +28,15 @@ export class ForgetPasswordComponent implements OnInit {
       password: '',
       newPassword: '',
     });
+    this.hidePassword = true;
+    this.hideNewPassword = true;
   }
   ngOnInit() {}
+
+  showPassword() {
+    this.hidePassword = !this.hidePassword;
+  }
+  showNewPassword() {
+    this.hideNewPassword = !this.hideNewPassword;
+  }
 }
