@@ -1,3 +1,6 @@
+@if (isloading()) {
+  <app-loader></app-loader>
+}
 <div class="bg-black/35 fixed inset-0 z-0"></div>
 <section class="flex min-h-screen justify-center items-center relative">
   <div class="w-75 sm:w-125 p-5 bg-white rounded-2xl relative">
@@ -190,7 +193,7 @@
             <p>Email is required.</p>
           </div>
         }
-        @if (getEmailController?.hasError('email')) {
+        @if (getEmailController?.hasError('email') || getEmailController?.hasError('pattern')) {
           <div
             class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
             role="alert"
@@ -346,7 +349,7 @@
         </label>
       </div>
       @if (getRePasswordController?.errors && getRePasswordController?.touched) {
-        @if (getRePasswordController?.hasError('required')) {
+        @if (getRePasswordController?.hasError('mismatch')) {
           <div
             class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
             role="alert"
@@ -368,16 +371,16 @@
                 d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
-            <p>Confirm Password is required.</p>
+            <p>Passwords do not match.</p>
           </div>
         }
       }
 
       <div class="flex justify-between items-center">
         <button
-          type="submit"
           [disabled]="registerForm.invalid"
-          class="text-white disabled:cursor-not-allowed disabled:bg-gray-300 bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+          type="submit"
+          class="text-white bg-brand box-border disabled:cursor-not-allowed disabled:bg-gray-300 border border-transparent hover:bg-brand-strong focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
         >
           Create
         </button>

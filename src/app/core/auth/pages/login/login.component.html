@@ -1,9 +1,17 @@
+@if (isloading()) {
+  <app-loader></app-loader>
+}
+
 <div class="bg-black/35 fixed inset-0 z-0"></div>
 <section class="flex min-h-screen justify-center items-center relative">
   <div class="w-75 sm:w-125 p-5 bg-white rounded-2xl relative">
     <h2 class="font-extrabold text-2xl text-blue-500 mb-2">Login</h2>
     <p class="font-normal text-[14px] text-gray-400">Login and continue your social journey.</p>
-    <form [formGroup]="loginForm" (ngSubmit)="Login()" class="mt-3">
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="Login()"
+      class="py-3 my-3 overflow-y-auto h-54 scrollbar-hide"
+    >
       <div class="relative z-0 w-full mb-6 group">
         <input
           type="email"
@@ -19,6 +27,58 @@
           >Email Address</label
         >
       </div>
+      @if (getEmailController?.errors && getEmailController?.touched) {
+        @if (getEmailController?.hasError('required')) {
+          <div
+            class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
+            role="alert"
+          >
+            <svg
+              class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <p>Email is required.</p>
+          </div>
+        }
+        @if (getEmailController?.hasError('email')) {
+          <div
+            class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
+            role="alert"
+          >
+            <svg
+              class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <p>Please enter a valid email.</p>
+          </div>
+        }
+      }
 
       <div class="relative z-0 w-full mb-6 group">
         <input
@@ -41,10 +101,74 @@
         </label>
       </div>
 
+      @if (getPasswordController?.errors && getPasswordController?.touched) {
+        @if (getPasswordController?.hasError('required')) {
+          <div
+            class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
+            role="alert"
+          >
+            <svg
+              class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <p>Password is required.</p>
+          </div>
+        }
+        @if (getPasswordController?.hasError('pattern')) {
+          <div
+            class="flex p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle"
+            role="alert"
+          >
+            <svg
+              class="w-4 h-4 me-2 shrink-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <span class="sr-only">Danger</span>
+            <div>
+              <span class="font-medium">Password must meet the following requirements:</span>
+              <ul class="mt-2 list-disc list-outside space-y-1 ps-2.5">
+                <li>At least 8 characters long</li>
+                <li>At least one uppercase letter (A-Z)</li>
+                <li>At least one lowercase letter (a-z)</li>
+                <li>At least one number (0-9)</li>
+                <li>At least one special character (e.g., # ? ! @ $ % ^ & * -)</li>
+              </ul>
+            </div>
+          </div>
+        }
+      }
+
       <div class="flex justify-between items-center mb-4">
         <button
           type="submit"
-          class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+          [disabled]="loginForm.invalid"
+          class="text-white bg-brand box-border disabled:cursor-not-allowed disabled:bg-gray-300 border border-transparent hover:bg-brand-strong focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
         >
           Login
         </button>
@@ -56,16 +180,16 @@
           Cencel
         </button>
       </div>
-      <a
-        routerLink="/auth/forget-password"
-        class="text-sm text-body block text-center hover:decoration-1 hover:underline mb-3"
-      >
-        Forget Password?
-      </a>
-      <span class="text-sm text-body block text-center border-t border-t-gray-300 pt-3">
-        Don't have an account?
-        <a routerLink="/auth/register" class="hover:decoration-1 hover:underline"> Sign up </a>
-      </span>
     </form>
+    <a
+      routerLink="/auth/forget-password"
+      class="text-sm text-body block text-center hover:decoration-1 hover:underline mb-3"
+    >
+      Forget Password?
+    </a>
+    <span class="text-sm text-body block text-center border-t border-t-gray-300 pt-3">
+      Don't have an account?
+      <a routerLink="/auth/register" class="hover:decoration-1 hover:underline"> Sign up </a>
+    </span>
   </div>
 </section>
