@@ -15,12 +15,12 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   hidePassword: boolean;
   isloading: any;
+
   constructor(
     private authService: AuthService,
     private sweetAlertService: SweetAlertService,
     private router: Router,
   ) {
-    this.isloading = signal(false);
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
       ]),
     });
     this.hidePassword = true;
+    this.isloading = signal(false);
   }
   Login() {
     if (this.loginForm.valid) {

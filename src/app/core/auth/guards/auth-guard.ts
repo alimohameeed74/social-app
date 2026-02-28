@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (lS) {
     return true;
   } else {
-    swal.fireSwal('please sign in to continue', 'warning');
+    swal.fireSwal('please sign in first', 'warning');
     router.navigate(['/auth']);
     return false;
   }

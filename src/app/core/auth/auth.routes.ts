@@ -22,6 +22,6 @@ export const routes: Routes = [
       import('./pages/forget-password/forget-password.component').then(
         (p) => p.ForgetPasswordComponent,
       ),
-    title: 'Reset Password',
+    title: 'Change Password',
   },
 ];

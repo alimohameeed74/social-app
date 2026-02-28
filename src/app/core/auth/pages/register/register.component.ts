@@ -53,11 +53,9 @@ export class RegisterComponent implements OnInit {
   createAccount() {
     if (this.registerForm.valid) {
       this.isloading.set(true);
-      // this.isloading = true;
       this.authService.register(this.registerForm.value).subscribe({
         next: (res: any) => {
           this.isloading.set(false);
-          // this.isloading = false;
           if (res?.data?.token) {
             localStorage.setItem('token', JSON.stringify(res?.data?.token));
             this.SweetAlertService.fireSwal('user created successfully.', 'success');
@@ -66,7 +64,6 @@ export class RegisterComponent implements OnInit {
         },
         error: (err) => {
           this.isloading.set(false);
-          // this.isloading = false;
           this.SweetAlertService.fireSwal(err?.error?.message, 'error');
           if (err.status === 409) {
             this.router.navigate(['/auth']);
