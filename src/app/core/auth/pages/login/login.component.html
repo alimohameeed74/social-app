@@ -5,8 +5,8 @@
 <div class="bg-black/35 fixed inset-0 z-0"></div>
 <section class="flex min-h-screen justify-center items-center relative">
   <div class="w-75 sm:w-125 p-5 bg-white rounded-2xl relative">
-    <h2 class="font-extrabold text-2xl text-blue-500 mb-2">Login</h2>
-    <p class="font-normal text-[14px] text-gray-400">Login and continue your social journey.</p>
+    <h2 class="font-extrabold text-2xl text-blue-500 mb-2">Sign in</h2>
+    <p class="font-normal text-[14px] text-gray-400">Signin and continue your social journey.</p>
     <form
       [formGroup]="loginForm"
       (ngSubmit)="Login()"
@@ -170,7 +170,7 @@
           [disabled]="loginForm.invalid"
           class="text-white bg-brand box-border disabled:cursor-not-allowed disabled:bg-gray-300 border border-transparent hover:bg-brand-strong focus:ring-4 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
         >
-          Login
+          Sign in
         </button>
         <button
           (click)="ClearForm()"
@@ -181,12 +181,7 @@
         </button>
       </div>
     </form>
-    <a
-      routerLink="/auth/forget-password"
-      class="text-sm text-body block text-center hover:decoration-1 hover:underline mb-3"
-    >
-      Forget Password?
-    </a>
+
     <span class="text-sm text-body block text-center border-t border-t-gray-300 pt-3">
       Don't have an account?
       <a routerLink="/auth/register" class="hover:decoration-1 hover:underline"> Sign up </a>

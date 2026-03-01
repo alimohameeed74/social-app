@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           this.isloading.set(false);
+
           this.sweetAlertService.fireSwal(err?.error?.message, 'error');
         },
       });

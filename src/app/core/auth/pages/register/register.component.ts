@@ -65,7 +65,7 @@ export class RegisterComponent implements OnInit {
         error: (err) => {
           this.isloading.set(false);
           this.SweetAlertService.fireSwal(err?.error?.message, 'error');
-          if (err.status === 409) {
+          if (err?.status === 409) {
             this.router.navigate(['/auth']);
           }
         },

@@ -23,4 +23,12 @@ export const routes: Routes = [
       import('./pages/profile/profile.component').then((p) => p.ProfileComponent),
     title: 'Main | Profile',
   },
+  {
+    path: 'change-password',
+    loadComponent: () =>
+      import('./pages/change-password/change-password.component').then(
+        (p) => p.ChangePasswordComponent,
+      ),
+    title: 'Change Password',
+  },
 ];

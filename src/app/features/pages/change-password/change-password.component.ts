@@ -1,17 +1,18 @@
-import { SweetAlertService } from './../../../services/sweet-alert/sweet-alert.service';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LoaderComponent } from '../../../layouts/components/loader/loader.component';
-import { AuthService } from '../../services/auth.service.js';
+
 import { Router } from '@angular/router';
+import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component.js';
+import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
+import { AuthService } from '../../../core/auth/services/auth.service.js';
 
 @Component({
-  selector: 'app-forget-password',
-  templateUrl: './forget-password.component.html',
-  styleUrls: ['./forget-password.component.css'],
+  selector: 'app-change-password',
+  templateUrl: './change-password.component.html',
+  styleUrls: ['./change-password.component.css'],
   imports: [ReactiveFormsModule, LoaderComponent],
 })
-export class ForgetPasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   hidePassword: boolean;
   hideNewPassword: boolean;
@@ -32,7 +33,7 @@ export class ForgetPasswordComponent implements OnInit {
     this.hidePassword = true;
     this.hideNewPassword = true;
   }
-  resetPassword() {
+  changePassword() {
     // if (this.changePasswordForm.valid) {
     //   this.isloading.set(true);
     //   this.authService.resetPassword(this.changePasswordForm.value).subscribe({
@@ -60,6 +61,7 @@ export class ForgetPasswordComponent implements OnInit {
   ngOnInit() {
     this.clearForm();
     const lS = localStorage.getItem('token');
+    console.log(lS);
     if (!lS) {
       this.sweetAlertService.fireSwal('please sign in first', 'warning');
       this.router.navigate(['/auth']);
