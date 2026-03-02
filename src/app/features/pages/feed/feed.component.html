@@ -1,3 +1,106 @@
-<p>
-  feed works!
-</p>
+<section class="grid grid-cols-1 xl:grid-cols-[240px_minmax(0,1fr)_300px] gap-4">
+  <div class="p-2 rounded-xl bg-white shadow font-bold h-50">
+    <ul class="grid grid-cols-2 xl:grid-cols-1 gap-2">
+      <li
+        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
+      >
+        <span>
+          <i class="fa-regular fa-newspaper me-1.5"></i>
+          Feed
+        </span>
+      </li>
+      <li
+        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
+      >
+        <span>
+          <i class="fa-solid fa-wand-magic-sparkles me-1.5"></i>
+          My Posts
+        </span>
+      </li>
+      <li
+        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
+      >
+        <span>
+          <i class="fa-brands fa-dribbble me-1.5"></i>
+          Community
+        </span>
+      </li>
+      <li
+        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
+      >
+        <span>
+          <i class="fa-regular fa-bookmark me-1.5"></i>
+          Saved
+        </span>
+      </li>
+    </ul>
+  </div>
+  <div class="bg-amber-300">two</div>
+  <div class="p-2.5 rounded-xl bg-white shadow font-bold">
+    <h2 class="font-bold text-[16px] text-black flex justify-between items-center mb-4">
+      <span>
+        <i class="fa-solid fa-users text-fg-brand me-1"></i>
+        Suggested Friends
+      </span>
+      <span
+        class="size-5 flex justify-center items-center rounded-[50%] bg-gray-200 text-gray-500 text-[12px]"
+        >5</span
+      >
+    </h2>
+
+    <div class="mb-3 relative">
+      <div class="absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none">
+        <svg
+          class="w-4 h-4 text-body"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-width="2"
+            d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+          />
+        </svg>
+      </div>
+      <input
+        type="search"
+        id="search"
+        class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base shadow-xs placeholder:text-gray-400 placeholder:font-normal"
+        placeholder="Search Friends"
+        required
+      />
+    </div>
+
+    <div class="border border-gray-200 p-2.5 rounded-xl bg-white flex flex-col mb-2">
+      <div class="flex items-center justify-between gap-2">
+        <button
+          type="button"
+          class="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50 cursor-pointer"
+        >
+          <img
+            alt="Ahmed Bahnasy"
+            class="h-10 w-10 rounded-full object-cover"
+            src="https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/1771018057253-2285ec56-8e3c-4ea3-9ee4-c235037ffffe-Screenshot-2026-02-13-at-11.27.15---PM.png"
+          />
+          <div class="min-w-0">
+            <p class="truncate text-sm font-bold text-slate-900 hover:underline">Ahmed Bahnasy</p>
+            <p class="truncate text-xs text-slate-500">@bahnasy20222</p>
+          </div>
+        </button>
+        <button
+          class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff] cursor-pointer"
+        >
+          <i class="fa-solid fa-user-plus me-1"></i>Follow
+        </button>
+      </div>
+      <div class="mt-2 flex items-center gap-2 text-[11px] font-normal">
+        <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5">199 followers</span>
+      </div>
+    </div>
+  </div>
+</section>
