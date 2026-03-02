@@ -38,14 +38,13 @@ export class LoginComponent implements OnInit {
         next: (res: any) => {
           this.isloading.set(false);
           if (res?.data?.token) {
-            localStorage.setItem('token', JSON.stringify(res?.data?.token));
+            localStorage.setItem('token', res?.data?.token);
             this.sweetAlertService.fireSwal(res?.message, 'success');
             this.router.navigate(['/main']);
           }
         },
         error: (err) => {
           this.isloading.set(false);
-
           this.sweetAlertService.fireSwal(err?.error?.message, 'error');
         },
       });

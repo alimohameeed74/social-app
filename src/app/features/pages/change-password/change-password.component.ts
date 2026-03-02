@@ -34,20 +34,28 @@ export class ChangePasswordComponent implements OnInit {
     this.hideNewPassword = true;
   }
   changePassword() {
-    // if (this.changePasswordForm.valid) {
-    //   this.isloading.set(true);
-    //   this.authService.resetPassword(this.changePasswordForm.value).subscribe({
-    //     next: (res: any) => {
-    //       console.log(res);
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //     },
-    //   });
-    // }
-    // this.isloading.set(false);
-    // console.log(this.changePasswordForm.value);
-    // this.clearForm();
+    if (this.changePasswordForm.valid) {
+      this.isloading.set(true);
+      this.authService.resetPassword(this.changePasswordForm.value).subscribe({
+        next: (res: any) => {
+          this.isloading.set(false);
+          console.log(res);
+          if (res?.data?.token) {
+            console.log('done');
+            localStorage.setItem('token', res?.data?.token);
+            this.sweetAlertService.fireSwal(res?.message, 'success');
+            this.clearForm();
+            this.router.navigate(['/main']);
+          }
+        },
+        error: (err) => {
+          this.isloading.set(false);
+          console.log('error');
+          console.log(err);
+          this.sweetAlertService.fireSwal('invalid operation', 'error');
+        },
+      });
+    }
   }
   clearForm() {
     this.changePasswordForm.reset({
@@ -61,7 +69,6 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() {
     this.clearForm();
     const lS = localStorage.getItem('token');
-    console.log(lS);
     if (!lS) {
       this.sweetAlertService.fireSwal('please sign in first', 'warning');
       this.router.navigate(['/auth']);

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FeedLeftComponent } from '../../components/feed-left/feed-left.component';
 
 @Component({
   selector: 'app-feed',
