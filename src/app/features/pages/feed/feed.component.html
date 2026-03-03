@@ -41,7 +41,7 @@
   </div>
   <div class="h-fit">
     <div class="p-2 rounded-xl bg-white shadow">
-      <form [formGroup]="postForm" (ngSubmit)="createPost()" class="flex flex-col gap-3">
+      <form [formGroup]="postForm" (ngSubmit)="createPost()" class="flex flex-col gap-3 mb-3">
         <div class="flex justify-start items-start gap-2">
           <img src="/image.png" alt="Account Logo" class="h-12 w-12 rounded-full" />
           <div class="flex flex-col gap-1">
@@ -68,7 +68,7 @@
           [placeholder]="`What's on your mind, ${'ali'}?`"
         ></textarea>
         @if (getPostBodyController?.errors && getPostBodyController?.touched) {
-          @if (getPostBodyController?.hasError('pattern')) {
+          @if (getPostBodyController?.hasError('errLength')) {
             <div
               class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
               role="alert"
@@ -131,8 +131,9 @@
               }"
             ></emoji-mart>
           </div>
+
           <button
-            [disabled]="postForm.invalid"
+            [disabled]="postForm.invalid && selectedImgObj === null"
             type="submit"
             class="flex items-center gap-2 rounded-md bg-[#1877f2] px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#166fe5] disabled:opacity-60"
           >
@@ -140,6 +141,13 @@
           </button>
         </div>
       </form>
+      <div class="relative" [class]="imgSrc ? 'block' : 'hidden'">
+        <i
+          class="absolute top-2 inset-e-1 fa-solid fa-x text-black cursor-pointer"
+          (click)="removeUploadedImg()"
+        ></i>
+        <img [src]="imgSrc" class="max-h-60 w-full object-cover rounded-xl" alt="Uploaded Image" />
+      </div>
     </div>
     <div>post1</div>
     <div>post2</div>
