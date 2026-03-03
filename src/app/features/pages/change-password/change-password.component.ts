@@ -39,9 +39,7 @@ export class ChangePasswordComponent implements OnInit {
       this.authService.resetPassword(this.changePasswordForm.value).subscribe({
         next: (res: any) => {
           this.isloading.set(false);
-          console.log(res);
           if (res?.data?.token) {
-            console.log('done');
             localStorage.setItem('token', res?.data?.token);
             this.sweetAlertService.fireSwal(res?.message, 'success');
             this.clearForm();
@@ -50,8 +48,7 @@ export class ChangePasswordComponent implements OnInit {
         },
         error: (err) => {
           this.isloading.set(false);
-          console.log('error');
-          console.log(err);
+
           this.sweetAlertService.fireSwal('invalid operation', 'error');
         },
       });
