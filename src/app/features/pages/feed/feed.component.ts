@@ -10,11 +10,12 @@ import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { PostsService } from '../../services/posts/posts.service.js';
 import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
 import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component';
+import { PostCardComponent } from '../../components/feed-components/post-card/post-card.component';
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
-  imports: [PickerComponent, ReactiveFormsModule, LoaderComponent],
+  imports: [PickerComponent, ReactiveFormsModule, LoaderComponent, PostCardComponent],
 })
 export class FeedComponent implements OnInit {
   showEmojes: boolean;
