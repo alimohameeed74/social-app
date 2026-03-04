@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
           this.isloading.set(false);
           if (res?.data?.token) {
             localStorage.setItem('token', res?.data?.token);
+            localStorage.setItem('name', res?.data?.user?.name);
             this.sweetAlertService.fireSwal(res?.message, 'success');
             this.router.navigate(['/main']);
           }

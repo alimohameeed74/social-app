@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FlowbiteService } from '../../../services/flowbit/flowbit.service';
 import { initFlowbite } from 'flowbite';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -10,17 +10,23 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   imports: [RouterLink, RouterLinkActive],
 })
 export class NavbarComponent implements OnInit {
+  name: string = '';
   toggler: boolean;
   constructor(
     private flowbiteService: FlowbiteService,
     private router: Router,
   ) {
+    this.name = '';
     this.toggler = false;
   }
   ngOnInit(): void {
     this.flowbiteService.loadFlowbite((flowbite) => {
       initFlowbite();
     });
+    const name = localStorage.getItem('name');
+    if (name) {
+      this.name = name;
+    }
   }
   toggle() {
     this.toggler = !this.toggler;
@@ -28,6 +34,7 @@ export class NavbarComponent implements OnInit {
   goTo(link: string = '/') {
     if (link === '/') {
       localStorage.removeItem('token');
+      localStorage.removeItem('name');
     }
     this.router.navigate([link]);
   }

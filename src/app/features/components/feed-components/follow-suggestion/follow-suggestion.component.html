@@ -1,0 +1,54 @@
+<div class="p-2.5 rounded-xl bg-white shadow font-bold h-fit sticky! top-18 z-10">
+  <h2 class="font-bold text-[16px] text-black flex justify-between items-center mb-4">
+    <span>
+      <i class="fa-solid fa-users text-fg-brand me-1"></i>
+      Suggested Friends
+    </span>
+    <span
+      class="size-5 flex justify-center items-center rounded-[50%] bg-gray-200 text-gray-500 text-[12px]"
+      >{{ suggestions().length }}</span
+    >
+  </h2>
+  <div class="h-150 scrollbar-hide overflow-y-auto">
+    @for (suggestion of suggestions(); track $index) {
+      <div class="border border-gray-200 p-2.5 rounded-xl bg-white flex flex-col mb-2">
+        <div class="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            class="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50 cursor-pointer"
+          >
+            <img
+              [alt]="suggestion.name"
+              class="h-10 w-10 rounded-full object-cover"
+              [src]="suggestion.photo"
+            />
+            <div class="min-w-0">
+              <p class="truncate text-sm font-bold text-slate-900 hover:underline">
+                {{ suggestion.name }}
+              </p>
+              <p class="truncate text-xs text-slate-500">@{{ suggestion.username }}</p>
+            </div>
+          </button>
+          <button
+            class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff] cursor-pointer"
+          >
+            <i class="fa-solid fa-user-plus me-1"></i>Follow
+          </button>
+        </div>
+        <div class="mt-2 flex items-center gap-2 text-[11px] font-normal">
+          <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5"
+            >{{ suggestion.followersCount }} followers</span
+          >
+          <span
+            [class]="suggestion.mutualFollowersCount === 0 ? 'hidden' : 'inline'"
+            class="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#1877f2]"
+            >{{ suggestion.mutualFollowersCount }} mutuals</span
+          >
+          <!-- <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5">199 followers</span> -->
+        </div>
+      </div>
+    } @empty {
+      <app-content-loader></app-content-loader>
+    }
+  </div>
+</div>

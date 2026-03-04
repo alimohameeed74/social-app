@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { FeedLeftComponent } from './feed-left.component';
+import { FollowSuggestionComponent } from './follow-suggestion.component';
 
-describe('FeedLeftComponent', () => {
-  let component: FeedLeftComponent;
-  let fixture: ComponentFixture<FeedLeftComponent>;
+describe('FollowSuggestionComponent', () => {
+  let component: FollowSuggestionComponent;
+  let fixture: ComponentFixture<FollowSuggestionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FeedLeftComponent ]
+      declarations: [ FollowSuggestionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FeedLeftComponent);
+    fixture = TestBed.createComponent(FollowSuggestionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

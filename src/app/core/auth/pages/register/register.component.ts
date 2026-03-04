@@ -58,6 +58,7 @@ export class RegisterComponent implements OnInit {
           this.isloading.set(false);
           if (res?.data?.token) {
             localStorage.setItem('token', res?.data?.token);
+            localStorage.setItem('name', res?.data?.user?.name);
             this.SweetAlertService.fireSwal('user created successfully.', 'success');
             this.router.navigate(['/main/feed']);
           }
