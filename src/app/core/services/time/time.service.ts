@@ -38,4 +38,15 @@ export class TimeService {
     const diffInYears = Math.floor(diffInMonths / 12);
     return `${diffInYears}y`;
   }
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  }
 }

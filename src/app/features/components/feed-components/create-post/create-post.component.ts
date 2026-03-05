@@ -1,3 +1,4 @@
+import { AuthService } from './../../../../core/auth/services/auth.service';
 import { Component, OnInit, Output, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
@@ -5,6 +6,8 @@ import { LoaderComponent } from '../../../../core/layouts/components/loader/load
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
 import { EventEmitter } from '@angular/core';
+import { ProfileService } from '../../../services/my-profile/profile.service.js';
+import { Iuser } from '../../../models/users/Iuser.js';
 @Component({
   selector: 'app-create-post',
   templateUrl: './create-post.component.html',
@@ -14,18 +17,18 @@ import { EventEmitter } from '@angular/core';
 export class CreatePostComponent implements OnInit {
   @Output() postCreated = new EventEmitter();
   counter: number = 0;
+  userDetails: Iuser | null = null;
   showEmojes: boolean;
   postForm: FormGroup;
   selectedImgObj: File | null;
   isloading: any;
-  name: string;
   imgSrc: string | ArrayBuffer | null;
   constructor(
     private fb: FormBuilder,
     private postsService: PostsService,
     private sweetAlertService: SweetAlertService,
+    private authService: AuthService,
   ) {
-    this.name = '';
     this.isloading = signal(false);
     this.selectedImgObj = null;
     this.showEmojes = false;
@@ -42,10 +45,7 @@ export class CreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
-    const name = localStorage.getItem('name');
-    if (name) {
-      this.name = name;
-    }
+    this.userDetails = this.authService.getUserData();
     this.clearForm();
   }
   toggleEmojes() {

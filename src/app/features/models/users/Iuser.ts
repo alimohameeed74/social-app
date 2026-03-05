@@ -3,4 +3,5 @@ export interface Iuser {
   name: string;
   username: string;
   photo: string;
+  cover?: string;
 }

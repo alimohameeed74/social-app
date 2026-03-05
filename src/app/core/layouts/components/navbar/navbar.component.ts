@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FlowbiteService } from '../../../services/flowbit/flowbit.service';
 import { initFlowbite } from 'flowbite';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../auth/services/auth.service.js';
+import { Iuser } from '../../../../features/models/users/Iuser.js';
 
 @Component({
   selector: 'app-navbar',
@@ -10,23 +12,21 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   imports: [RouterLink, RouterLinkActive],
 })
 export class NavbarComponent implements OnInit {
-  name: string = '';
+  userDetails: Iuser | null = null;
   toggler: boolean;
   constructor(
     private flowbiteService: FlowbiteService,
     private router: Router,
+    private authService: AuthService,
   ) {
-    this.name = '';
+    this.userDetails = null;
     this.toggler = false;
   }
   ngOnInit(): void {
     this.flowbiteService.loadFlowbite((flowbite) => {
       initFlowbite();
     });
-    const name = localStorage.getItem('name');
-    if (name) {
-      this.name = name;
-    }
+    this.userDetails = this.authService.getUserData();
   }
   toggle() {
     this.toggler = !this.toggler;
@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit {
   goTo(link: string = '/') {
     if (link === '/') {
       localStorage.removeItem('token');
-      localStorage.removeItem('name');
+      this.authService.deleteUserData();
     }
     this.router.navigate([link]);
   }
