@@ -10,8 +10,13 @@ import { environment } from '../../../../environments/environment.js';
 export class FollowSuggestionsService {
   constructor(private httpClient: HttpClient) {}
   getFollowSuggestions(): Observable<Isuggest[]> {
+    return this.httpClient.get<Isuggest[]>(`${environment.apiURL}/users/suggestions?limit=10`, {
+      headers: environment.headers,
+    });
+  }
+  getMoreFollowSuggestions(limit: number): Observable<Isuggest[]> {
     return this.httpClient.get<Isuggest[]>(
-      `https://route-posts.routemisr.com/users/suggestions?limit=10`,
+      `${environment.apiURL}/users/suggestions?limit=${limit}`,
       {
         headers: environment.headers,
       },

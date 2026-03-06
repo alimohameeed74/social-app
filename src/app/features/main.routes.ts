@@ -18,6 +18,12 @@ export const routes: Routes = [
     title: 'Main | Notifications',
   },
   {
+    path: 'suggestions',
+    loadComponent: () =>
+      import('./pages/suggestions/suggestions.component').then((p) => p.SuggestionsComponent),
+    title: 'Main | Suggestions',
+  },
+  {
     path: 'profile',
     loadComponent: () =>
       import('./pages/profile/profile.component').then((p) => p.ProfileComponent),

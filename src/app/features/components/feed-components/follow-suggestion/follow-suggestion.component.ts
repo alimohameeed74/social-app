@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Isuggest } from '../../../models/follow-suggestions/Isuggest.js';
 import { FollowSuggestionsService } from './../../../services/follow-suggestions/follow-suggestions.service';
 import { Component, OnInit, signal } from '@angular/core';
@@ -11,7 +12,11 @@ import { ContentLoaderComponent } from '../../../../core/layouts/components/cont
 })
 export class FollowSuggestionComponent implements OnInit {
   suggestions = signal<Isuggest[]>([]);
-  constructor(private followSuggestionsService: FollowSuggestionsService) {
+
+  constructor(
+    private followSuggestionsService: FollowSuggestionsService,
+    private router: Router,
+  ) {
     this.suggestions.set([]);
   }
 
@@ -28,5 +33,8 @@ export class FollowSuggestionComponent implements OnInit {
         this.suggestions.set([]);
       },
     });
+  }
+  goToSuggestions() {
+    this.router.navigate(['/main/suggestions']);
   }
 }
