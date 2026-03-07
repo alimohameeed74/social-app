@@ -1,41 +1,8 @@
-<section class="grid grid-cols-1 xl:grid-cols-[240px_minmax(0,1fr)_300px] gap-4">
-  <div class="p-2 rounded-xl bg-white shadow font-bold h-fit sticky! top-18 z-10">
-    <ul class="grid grid-cols-2 xl:grid-cols-1 gap-2">
-      <li
-        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
-      >
-        <span>
-          <i class="fa-regular fa-newspaper me-1.5"></i>
-          Feed
-        </span>
-      </li>
-      <li
-        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
-      >
-        <span>
-          <i class="fa-solid fa-wand-magic-sparkles me-1.5"></i>
-          My Posts
-        </span>
-      </li>
-      <li
-        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
-      >
-        <span>
-          <i class="fa-brands fa-dribbble me-1.5"></i>
-          Community
-        </span>
-      </li>
-      <li
-        class="hover:bg-[#F1F5F9] text-[14px] text-gray-600 cursor-pointer p-2 rounded-xl active:text-fg-brand active:bg-blue-300 xl:bg-transparent bg-gray-100"
-      >
-        <span>
-          <i class="fa-regular fa-bookmark me-1.5"></i>
-          Saved
-        </span>
-      </li>
-    </ul>
-  </div>
-  <div class="h-fit">
+<section class="grid grid-cols-1 xl:grid-cols-4 gap-4">
+  <!-- Suggestion Component-->
+  <app-follow-suggestion class="xl:col-span-1"></app-follow-suggestion>
+
+  <div class="h-fit xl:col-span-3">
     <!-- Create Post  -->
     <app-create-post (postCreated)="showPost($event)"></app-create-post>
 
@@ -44,6 +11,4 @@
       <app-posts-cards [post]="postStatus"></app-posts-cards>
     </div>
   </div>
-  <!-- Suggestion Component-->
-  <app-follow-suggestion></app-follow-suggestion>
 </section>

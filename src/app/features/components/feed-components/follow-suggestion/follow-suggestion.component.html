@@ -9,7 +9,7 @@
       >{{ suggestions().length }}</span
     >
   </h2>
-  <div class="h-140 scrollbar-hide overflow-y-auto">
+  <div class="h-100 xl:h-140 scrollbar-hide overflow-y-auto">
     @for (suggestion of suggestions(); track $index) {
       <div class="border border-gray-200 p-2.5 rounded-xl bg-white flex flex-col mb-2">
         <div class="flex items-center justify-between gap-2">
