@@ -6,6 +6,7 @@ export interface Icomment {
   commentCreator: IcommentCreator;
   post: string;
   parentComment: any;
-  likes: any[];
+  likes: string[];
   createdAt: string;
+  repliesCount?: number;
 }

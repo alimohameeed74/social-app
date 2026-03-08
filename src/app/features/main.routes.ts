@@ -12,6 +12,14 @@ export const routes: Routes = [
     title: 'Main | Feed',
   },
   {
+    path: 'posts/:id',
+    loadComponent: () =>
+      import('./components/feed-components/post-details/post-details.component').then(
+        (p) => p.PostDetailsComponent,
+      ),
+    title: 'Post Details',
+  },
+  {
     path: 'notifications',
     loadComponent: () =>
       import('./pages/notifications/notifications.component').then((p) => p.NotificationsComponent),

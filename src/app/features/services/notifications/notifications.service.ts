@@ -16,13 +16,21 @@ export class NotificationsService {
     });
   }
   makeNotificationAsRead(notificationId: string): Observable<any> {
-    return this.httpClient.patch(`${environment.apiURL}/notifications/${notificationId}/read`, {
-      headers: environment.headers,
-    });
+    return this.httpClient.patch(
+      `${environment.apiURL}/notifications/${notificationId}/read`,
+      {},
+      {
+        headers: environment.headers,
+      },
+    );
   }
   makeAllNotificationAsRead(): Observable<any> {
-    return this.httpClient.patch(`${environment.apiURL}/notifications/read-all`, {
-      headers: environment.headers,
-    });
+    return this.httpClient.patch(
+      `${environment.apiURL}/notifications/read-all`,
+      {},
+      {
+        headers: environment.headers,
+      },
+    );
   }
 }

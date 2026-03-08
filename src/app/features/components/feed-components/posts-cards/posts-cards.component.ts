@@ -3,6 +3,7 @@ import { Component, Input, OnInit, signal } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { ContentLoaderComponent } from '../../../../core/layouts/components/content-loader/content-loader.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-posts-cards',
@@ -16,6 +17,7 @@ export class PostsCardsComponent implements OnInit {
   constructor(
     private postService: PostsService,
     private timeService: TimeService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -38,5 +40,8 @@ export class PostsCardsComponent implements OnInit {
   }
   timeFormat(data: string) {
     return this.timeService.timeAgoShort(data);
+  }
+  goToPostComments(id: string) {
+    this.router.navigate([`/main/posts/${id}`]);
   }
 }
