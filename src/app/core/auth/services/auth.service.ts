@@ -12,13 +12,7 @@ import { Iuser } from '../../../features/models/users/Iuser.js';
 })
 export class AuthService {
   private userData = signal<Iuser | null>(null);
-  constructor(private httpClient: HttpClient) {
-    const user = localStorage.getItem('user');
-
-    if (user) {
-      this.userData.set(JSON.parse(user));
-    }
-  }
+  constructor(private httpClient: HttpClient) {}
   login(data: Ilogin): Observable<any> {
     return this.httpClient.post(`${environment.apiURL}/users/signin`, data);
   }

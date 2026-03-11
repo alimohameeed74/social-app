@@ -38,6 +38,12 @@ export const routes: Routes = [
     title: 'Main | Profile',
   },
   {
+    path: 'profile/:id',
+    loadComponent: () =>
+      import('./pages/profile/profile.component').then((p) => p.ProfileComponent),
+    title: 'Main | Profile',
+  },
+  {
     path: 'change-password',
     loadComponent: () =>
       import('./pages/change-password/change-password.component').then(

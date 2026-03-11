@@ -5,9 +5,9 @@
 <div class="p-2 rounded-xl bg-white shadow">
   <form [formGroup]="postForm" (ngSubmit)="createPost()" class="flex flex-col gap-3 mb-3">
     <div class="flex justify-start items-start gap-2">
-      <img [src]="userDetails?.photo" alt="Account Logo" class="h-12 w-12 rounded-full" />
+      <img [src]="userDetails()?.photo" alt="Account Logo" class="h-12 w-12 rounded-full" />
       <div class="flex flex-col gap-1">
-        <h2 class="font-bold text-[16px] text-black">{{ userDetails?.name }}</h2>
+        <h2 class="font-bold text-[16px] text-black">{{ userDetails()?.name }}</h2>
         <select
           id="privacy"
           name="privacy"

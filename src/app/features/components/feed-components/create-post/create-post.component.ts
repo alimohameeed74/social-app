@@ -17,7 +17,7 @@ import { Iuser } from '../../../models/users/Iuser.js';
 export class CreatePostComponent implements OnInit {
   @Output() postCreated = new EventEmitter();
   counter: number = 0;
-  userDetails: Iuser | null = null;
+  userDetails = signal<Iuser | null>(null);
   showEmojes: boolean;
   postForm: FormGroup;
   selectedImgObj: File | null;
@@ -27,7 +27,7 @@ export class CreatePostComponent implements OnInit {
     private fb: FormBuilder,
     private postsService: PostsService,
     private sweetAlertService: SweetAlertService,
-    private authService: AuthService,
+    private profileService: ProfileService,
   ) {
     this.isloading = signal(false);
     this.selectedImgObj = null;
@@ -45,7 +45,7 @@ export class CreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userDetails = this.authService.getUserData();
+    this.getMyProfile();
     this.clearForm();
   }
   toggleEmojes() {
@@ -121,5 +121,16 @@ export class CreatePostComponent implements OnInit {
   removeUploadedImg() {
     this.imgSrc = null;
     this.selectedImgObj = null;
+  }
+
+  getMyProfile() {
+    this.profileService.getMyProfile().subscribe({
+      next: (res: any) => {
+        this.userDetails.set(res?.data?.user);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

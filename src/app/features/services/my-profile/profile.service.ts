@@ -14,8 +14,23 @@ export class ProfileService {
       headers: environment.headers,
     });
   }
+  getUserProfile(userId: string): Observable<any> {
+    return this.httpClient.get(`${environment.apiURL}/users/${userId}/profile`, {
+      headers: environment.headers,
+    });
+  }
   getMyposts(): Observable<any> {
     return this.httpClient.get(`${environment.apiURL}/posts/feed?only=me&limit=20`, {
+      headers: environment.headers,
+    });
+  }
+  getUserposts(userId: string): Observable<any> {
+    return this.httpClient.get(`${environment.apiURL}/users/${userId}/posts`, {
+      headers: environment.headers,
+    });
+  }
+  deletePost(postId: string): Observable<any> {
+    return this.httpClient.delete(`${environment.apiURL}/posts/${postId}`, {
       headers: environment.headers,
     });
   }

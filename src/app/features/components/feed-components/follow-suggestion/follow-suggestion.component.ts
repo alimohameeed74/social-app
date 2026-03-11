@@ -37,4 +37,7 @@ export class FollowSuggestionComponent implements OnInit {
   goToSuggestions() {
     this.router.navigate(['/main/suggestions']);
   }
+  goToProfile(id: string) {
+    this.router.navigate([`/main/profile/${id}`]);
+  }
 }

@@ -33,4 +33,9 @@ export class NotificationsService {
       },
     );
   }
+  getNotificationsCount(): Observable<any> {
+    return this.httpClient.get(`${environment.apiURL}/notifications/unread-count`, {
+      headers: environment.headers,
+    });
+  }
 }

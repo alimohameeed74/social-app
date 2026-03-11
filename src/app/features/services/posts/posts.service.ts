@@ -43,4 +43,18 @@ export class PostsService {
       },
     );
   }
+  likeUnlikePost(postId: string): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiURL}/posts/${postId}/like`,
+      {},
+      {
+        headers: environment.headers,
+      },
+    );
+  }
+  getPostLikes(postId: string): Observable<any> {
+    return this.httpClient.get(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`, {
+      headers: environment.headers,
+    });
+  }
 }

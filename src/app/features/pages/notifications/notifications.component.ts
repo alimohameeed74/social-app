@@ -3,12 +3,14 @@ import { Inotification } from '../../models/notification/Inotification.js';
 import { NotificationsService } from './../../services/notifications/notifications.service';
 import { Component, OnInit, signal } from '@angular/core';
 import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component';
+import { Router } from '@angular/router';
+import { ContentLoaderComponent } from '../../../core/layouts/components/content-loader/content-loader.component';
 
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.css'],
-  imports: [LoaderComponent],
+  imports: [LoaderComponent, ContentLoaderComponent],
 })
 export class NotificationsComponent implements OnInit {
   isloading = signal<boolean>(false);
@@ -17,6 +19,7 @@ export class NotificationsComponent implements OnInit {
   constructor(
     private notificationsService: NotificationsService,
     private timeService: TimeService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -66,5 +69,13 @@ export class NotificationsComponent implements OnInit {
     this.notifications().forEach((elem) => {
       if (elem.isRead) this.readCount++;
     });
+  }
+
+  goToPostDetails(id: string) {
+    this.router.navigate([`/main/posts/${id}`]);
+  }
+
+  goToProfile(userId: string) {
+    this.router.navigate([`/main/profile/${userId}`]);
   }
 }

@@ -39,8 +39,7 @@ export class LoginComponent implements OnInit {
           this.isloading.set(false);
           if (res?.data?.token) {
             localStorage.setItem('token', res?.data?.token);
-            localStorage.setItem('user', JSON.stringify(res?.data?.user));
-            this.authService.holdUserData(res?.data?.user);
+
             this.sweetAlertService.fireSwal(res?.message, 'success');
             this.router.navigate(['/main']);
           }

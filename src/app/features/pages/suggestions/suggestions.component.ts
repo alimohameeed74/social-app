@@ -4,6 +4,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component';
 import { Isuggest } from '../../models/follow-suggestions/Isuggest.js';
 import { count } from 'console';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-suggestions',
@@ -18,6 +19,7 @@ export class SuggestionsComponent implements OnInit {
   constructor(
     private location: Location,
     private followSuggestionsService: FollowSuggestionsService,
+    private router: Router,
   ) {
     this.counter = 1;
   }
@@ -46,5 +48,8 @@ export class SuggestionsComponent implements OnInit {
   getMoreSuggestions() {
     this.counter++;
     this.getMySuggestions(this.counter);
+  }
+  goToProfile(id: string) {
+    this.router.navigate([`/main/profile/${id}`]);
   }
 }
