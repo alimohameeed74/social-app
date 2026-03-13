@@ -1,3 +1,4 @@
+import { CommentsService } from './../../../services/comments/comments.service';
 import { Component, OnInit, signal } from '@angular/core';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { Icomment } from '../../../models/comments/Icomment.js';
@@ -6,7 +7,6 @@ import { ContentLoaderComponent } from '../../../../core/layouts/components/cont
 import { ActivatedRoute } from '@angular/router';
 import { TimeService } from '../../../../core/services/time/time.service.js';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommentsService } from '../../../services/comments/comments.service.js';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
 
@@ -150,6 +150,16 @@ export class PostCommentsComponent implements OnInit {
       error: (err) => {
         this.isLoading.set(false);
         this.sweetAlertService.fireSwal('failed to delete comment', 'error');
+      },
+    });
+  }
+  likeUnlikeComment(commentId: string) {
+    this.commentsService.likeUnlikeComment(this.postId, commentId).subscribe({
+      next: (res: any) => {
+        this.getComments(this.postId);
+      },
+      error: (err) => {
+        console.log(err);
       },
     });
   }

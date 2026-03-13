@@ -52,4 +52,14 @@ export class SuggestionsComponent implements OnInit {
   goToProfile(id: string) {
     this.router.navigate([`/main/profile/${id}`]);
   }
+  followUser(userId: string) {
+    this.followSuggestionsService.followUnfollowUser(userId).subscribe({
+      next: (res: any) => {
+        this.getMySuggestions(this.counter);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 }

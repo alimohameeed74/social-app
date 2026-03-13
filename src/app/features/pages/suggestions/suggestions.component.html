@@ -75,6 +75,7 @@
                 <p class="truncate text-xs text-slate-500">@{{ suggest.username }}</p>
               </div></button
             ><button
+              (click)="followUser(suggest._id)"
               class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff]"
             >
               <svg

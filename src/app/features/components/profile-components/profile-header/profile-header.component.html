@@ -1,3 +1,7 @@
+@if (isLoading()) {
+  <app-loader></app-loader>
+}
+
 <section
   class="overflow-hidden mb-3 rounded-2xl border border-slate-200 bg-white shadow-[0_2px_10px_rgba(15,23,42,.06)] sm:rounded-[28px]"
 >
@@ -127,7 +131,7 @@
   </div>
   <div class="relative -mt-12 px-3 pb-5 sm:-mt-16 sm:px-8 sm:pb-6">
     <div class="rounded-3xl border border-white/60 bg-white/92 p-5 backdrop-blur-xl sm:p-7">
-      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div class="min-w-0">
           <div class="flex items-start gap-4">
             <div class="group/avatar relative shrink-0">
@@ -138,6 +142,7 @@
                   [src]="accoutUser?.photo"
                 /></button
               ><button
+                [class]="otherUser ? 'hidden' : ''"
                 type="button"
                 class="absolute bottom-1 left-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white text-[#1877f2] opacity-100 shadow-sm ring-1 ring-slate-200 transition duration-200 hover:bg-slate-50 sm:opacity-0 sm:group-hover/avatar:opacity-100 sm:group-focus-within/avatar:opacity-100"
                 title="View profile photo"
@@ -145,9 +150,14 @@
               >
                 <i class="fa-solid fa-maximize"></i></button
               ><label
+                [class]="otherUser ? 'hidden' : ''"
                 class="absolute bottom-1 right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[#1877f2] text-white opacity-100 shadow-sm transition duration-200 hover:bg-[#166fe5] sm:opacity-0 sm:group-hover/avatar:opacity-100 sm:group-focus-within/avatar:opacity-100"
                 ><i class="fa-regular fa-camera"></i
-                ><input accept="image/*" class="hidden" type="file"
+                ><input
+                  [class]="otherUser ? 'hidden' : ''"
+                  accept="image/*"
+                  class="hidden"
+                  type="file"
               /></label>
             </div>
             <div class="min-w-0 pb-1">
@@ -162,7 +172,10 @@
             </div>
           </div>
         </div>
-        <div class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:w-[520px]">
+        <div
+          [class]="otherUser ? 'hidden' : ''"
+          class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:w-[520px]"
+        >
           <div
             class="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-center sm:px-4 sm:py-4"
           >
@@ -194,8 +207,17 @@
             </p>
           </div>
         </div>
+        <button
+          type="button"
+          (click)="followUnfollowUser(accoutUser!.id)"
+          [class]="otherUser ? 'inline-flex' : 'hidden'"
+          class="w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-extrabold transition sm:w-auto bg-[#1877f2] text-white hover:bg-[#166fe5]"
+        >
+          <i class="fa-solid" [class]="isFollowing ? 'fa-check' : 'fa-user-plus'"></i>
+          {{ isFollowing ? 'Following' : 'Follow' }}
+        </button>
       </div>
-      <div class="mt-5 grid gap-4 lg:grid-cols-[1.3fr_.7fr]">
+      <div [class]="otherUser ? 'hidden' : ''" class="mt-5 grid gap-4 lg:grid-cols-[1.3fr_.7fr]">
         <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <h3 class="text-sm font-extrabold text-slate-800">About</h3>
           <div class="mt-3 space-y-2 text-sm text-slate-600">

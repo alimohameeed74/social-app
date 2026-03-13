@@ -22,4 +22,13 @@ export class FollowSuggestionsService {
       },
     );
   }
+  followUnfollowUser(userId: string): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiURL}/users/${userId}/follow`,
+      {},
+      {
+        headers: environment.headers,
+      },
+    );
+  }
 }

@@ -18,4 +18,13 @@ export class CommentsService {
       headers: environment.headers,
     });
   }
+  likeUnlikeComment(postId: string, commentId: string): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiURL}/posts/${postId}/comments/${commentId}/like`,
+      {},
+      {
+        headers: environment.headers,
+      },
+    );
+  }
 }

@@ -16,13 +16,16 @@ import { LoaderComponent } from '../../../../core/layouts/components/loader/load
 export class ProfilePostsComponent implements OnInit {
   posts = signal<Ipost[]>([]);
   isLoading = signal<boolean>(false);
+  otherUser: boolean;
   constructor(
     private profileService: ProfileService,
     private timeService: TimeService,
     private sweetAlertService: SweetAlertService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-  ) {}
+  ) {
+    this.otherUser = false;
+  }
 
   ngOnInit() {
     this.posts.set([]);
@@ -31,6 +34,7 @@ export class ProfilePostsComponent implements OnInit {
       if (!id) {
         this.getPosts();
       } else {
+        this.otherUser = true;
         this.getUserPosts(id);
       }
     });
@@ -79,4 +83,5 @@ export class ProfilePostsComponent implements OnInit {
       },
     });
   }
+  editPost(postId: string) {}
 }

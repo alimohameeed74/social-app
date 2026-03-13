@@ -12,7 +12,6 @@ import { ContentLoaderComponent } from '../../../../core/layouts/components/cont
 })
 export class FollowSuggestionComponent implements OnInit {
   suggestions = signal<Isuggest[]>([]);
-
   constructor(
     private followSuggestionsService: FollowSuggestionsService,
     private router: Router,
@@ -39,5 +38,15 @@ export class FollowSuggestionComponent implements OnInit {
   }
   goToProfile(id: string) {
     this.router.navigate([`/main/profile/${id}`]);
+  }
+  followUser(userId: string) {
+    this.followSuggestionsService.followUnfollowUser(userId).subscribe({
+      next: (res: any) => {
+        this.getMyFollowSuggestions();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

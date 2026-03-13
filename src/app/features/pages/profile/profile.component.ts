@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ProfileComponent implements OnInit {
   isLoading = signal<boolean>(false);
   profileDetails: IaccountUser | null = null;
-
+  isFollowing: boolean | null = null;
   constructor(
     private profileService: ProfileService,
     private activatedRoute: ActivatedRoute,
@@ -51,6 +51,7 @@ export class ProfileComponent implements OnInit {
       next: (res: any) => {
         this.isLoading.set(false);
         this.profileDetails = res?.data?.user;
+        this.isFollowing = res?.data?.isFollowing;
       },
       error: (err) => {
         this.isLoading.set(false);

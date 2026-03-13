@@ -35,13 +35,10 @@
                 fomatTime(comment.createdAt)
               }}</span
               ><button
+                (click)="likeUnlikeComment(comment._id)"
                 class="text-xs font-semibold hover:underline disabled:opacity-60 text-slate-500"
               >
-                Like ({{ comment.likes.length }})</button
-              ><button
-                class="text-xs font-semibold transition hover:underline disabled:opacity-60 text-slate-500 hover:text-[#1877f2]"
-              >
-                Reply
+                Like ({{ comment.likes.length }})
               </button>
             </div>
           </div>

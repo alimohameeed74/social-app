@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.getNotifications();
     this.interval = setInterval(() => {
       this.getNotifications();
-    }, 30000);
+    }, 10000);
   }
   toggle() {
     this.toggler = !this.toggler;
