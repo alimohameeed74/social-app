@@ -167,7 +167,7 @@
                 {{ accoutUser?.name }}
               </h2>
               <p class="mt-1 truncate text-sm sm:text-lg font-semibold text-slate-500 md:text-xl">
-                {{ accoutUser?.username }}
+                @{{ accoutUser?.username ? accoutUser?.username : 'user' }}
               </p>
             </div>
           </div>

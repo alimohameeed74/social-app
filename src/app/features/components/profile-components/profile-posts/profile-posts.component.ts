@@ -17,6 +17,7 @@ export class ProfilePostsComponent implements OnInit {
   posts = signal<Ipost[]>([]);
   isLoading = signal<boolean>(false);
   otherUser: boolean;
+  contentLoading = signal<boolean>(false);
   constructor(
     private profileService: ProfileService,
     private timeService: TimeService,
@@ -43,10 +44,13 @@ export class ProfilePostsComponent implements OnInit {
   getPosts() {
     this.profileService.getMyposts().subscribe({
       next: (res: any) => {
+        this.contentLoading.set(true);
         this.posts.set(res?.data?.posts);
       },
       error: (err) => {
+        this.contentLoading.set(true);
         this.posts.set([]);
+
         console.log(err);
       },
     });
@@ -55,9 +59,11 @@ export class ProfilePostsComponent implements OnInit {
   getUserPosts(id: string) {
     this.profileService.getUserposts(id).subscribe({
       next: (res: any) => {
+        this.contentLoading.set(true);
         this.posts.set(res?.data?.posts);
       },
       error: (err) => {
+        this.contentLoading.set(true);
         this.posts.set([]);
         console.log(err);
       },
