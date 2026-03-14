@@ -1,3 +1,4 @@
+import { AuthService } from './../../../core/auth/services/auth.service';
 import { ProfileService } from './../../services/my-profile/profile.service';
 import { Component, OnInit, signal } from '@angular/core';
 import { ProfileHeaderComponent } from '../../components/profile-components/profile-header/profile-header.component';
@@ -18,6 +19,7 @@ export class ProfileComponent implements OnInit {
   isFollowing: boolean | null = null;
   constructor(
     private profileService: ProfileService,
+    private authService: AuthService,
     private activatedRoute: ActivatedRoute,
   ) {}
 
@@ -25,7 +27,7 @@ export class ProfileComponent implements OnInit {
     this.isLoading.set(true);
     this.activatedRoute.paramMap.subscribe((param) => {
       const id = param.get('id');
-      if (!id) {
+      if (!id || id === this.authService.getUserData()?._id) {
         this.getMyProfile();
       } else {
         this.getUserProfile(id);

@@ -3,6 +3,7 @@ import { Component, Input, OnInit, signal } from '@angular/core';
 import { IaccountUser } from '../../../models/account-user/Iaccount-user.js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
+import { AuthService } from '../../../../core/auth/services/auth.service.js';
 
 @Component({
   selector: 'app-profile-header',
@@ -20,6 +21,7 @@ export class ProfileHeaderComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private followSuggestionsService: FollowSuggestionsService,
     private router: Router,
+    private authService: AuthService,
   ) {
     this.otherUser = false;
   }
@@ -27,7 +29,7 @@ export class ProfileHeaderComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe((param) => {
       const id = param.get('id');
-      if (id) {
+      if (id && id !== this.authService.getUserData()?._id) {
         this.otherUser = true;
       }
     });

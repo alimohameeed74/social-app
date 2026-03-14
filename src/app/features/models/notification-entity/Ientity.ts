@@ -8,4 +8,5 @@ export interface Ientity {
   likesCount: number;
   isShare: boolean;
   id: string;
+  post?: string;
 }
