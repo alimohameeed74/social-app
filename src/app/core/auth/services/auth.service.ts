@@ -11,8 +11,10 @@ import { Iuser } from '../../../features/models/users/Iuser.js';
   providedIn: 'root',
 })
 export class AuthService {
-  private userData = signal<Iuser | null>(null);
-  constructor(private httpClient: HttpClient) {}
+  private userData = signal<Iuser | null>(JSON.parse(localStorage.getItem('userData')!));
+  constructor(private httpClient: HttpClient) {
+    console.log('from auth service ', this.userData());
+  }
   login(data: Ilogin): Observable<any> {
     return this.httpClient.post(`${environment.apiURL}/users/signin`, data);
   }
@@ -32,6 +34,6 @@ export class AuthService {
   }
   deleteUserData() {
     this.userData.set(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem('id');
   }
 }

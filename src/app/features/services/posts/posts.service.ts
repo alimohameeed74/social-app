@@ -57,4 +57,9 @@ export class PostsService {
       headers: environment.headers,
     });
   }
+  updatePost(postId: string, data: FormData): Observable<any> {
+    return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data, {
+      headers: environment.headers,
+    });
+  }
 }

@@ -20,6 +20,15 @@ export const routes: Routes = [
     title: 'Post Details',
   },
   {
+    path: 'edit-posts/:id',
+    loadComponent: () =>
+      import('./components/feed-components/edit-post/edit-post.component').then(
+        (p) => p.EditPostComponent,
+      ),
+    title: 'Edit Post',
+  },
+
+  {
     path: 'notifications',
     loadComponent: () =>
       import('./pages/notifications/notifications.component').then((p) => p.NotificationsComponent),

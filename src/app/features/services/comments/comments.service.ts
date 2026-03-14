@@ -27,4 +27,13 @@ export class CommentsService {
       },
     );
   }
+  updatecomment(postId: string, commentId: string, data: string): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiURL}/posts/${postId}/comments/${commentId}/like`,
+      data,
+      {
+        headers: environment.headers,
+      },
+    );
+  }
 }

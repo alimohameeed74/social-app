@@ -4,7 +4,7 @@ import { PostsService } from '../../../services/posts/posts.service.js';
 import { Icomment } from '../../../models/comments/Icomment.js';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
 import { ContentLoaderComponent } from '../../../../core/layouts/components/content-loader/content-loader.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TimeService } from '../../../../core/services/time/time.service.js';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
@@ -32,6 +32,7 @@ export class PostCommentsComponent implements OnInit {
     private timeService: TimeService,
     private fb: FormBuilder,
     private commentsService: CommentsService,
+    private router: Router,
   ) {
     this.selectedImgObj = null;
     this.showEmojes = false;
@@ -163,4 +164,7 @@ export class PostCommentsComponent implements OnInit {
       },
     });
   }
+  // editComment(id: string) {
+
+  // }
 }

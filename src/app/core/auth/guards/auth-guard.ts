@@ -5,10 +5,9 @@ import { SweetAlertService } from '../../services/sweet-alert/sweet-alert.servic
 
 export const authGuard: CanActivateFn = (route, state) => {
   const lS = localStorage.getItem('token');
-  const lSUser = localStorage.getItem('token');
   const router = inject(Router);
   const swal = inject(SweetAlertService);
-  if (lS && lSUser) {
+  if (lS) {
     return true;
   } else {
     swal.fireSwal('please sign in first', 'warning');

@@ -32,7 +32,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.flowbiteService.loadFlowbite((flowbite) => {
       initFlowbite();
     });
-    this.getMyProfile();
+    this.userDetails.set(this.authService.getUserData());
     this.getNotifications();
     this.interval = setInterval(() => {
       this.getNotifications();
@@ -48,16 +48,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
     this.router.navigate([link]);
   }
-  getMyProfile() {
-    this.profileService.getMyProfile().subscribe({
-      next: (res: any) => {
-        this.userDetails.set(res?.data?.user);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-  }
+
   getNotifications() {
     this.notificationsService.getNotificationsCount().subscribe({
       next: (res: any) => {

@@ -83,5 +83,7 @@ export class ProfilePostsComponent implements OnInit {
       },
     });
   }
-  editPost(postId: string) {}
+  editPost(postId: string) {
+    this.router.navigate([`/main/edit-posts/${postId}`]);
+  }
 }

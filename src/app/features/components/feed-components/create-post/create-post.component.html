@@ -28,7 +28,7 @@
       rows="4"
       autocomplete="off"
       class="bg-neutral-secondary-medium border border-default-medium text-sm rounded-base block w-full p-3.5 shadow-xs placeholder:text-gray-400 placeholder:font-normal"
-      [placeholder]="`What's on your mind, ${'ali'}?`"
+      [placeholder]="`What's on your mind, ${userDetails()?.name?.split(' ')?.[0]}?`"
     ></textarea>
     @if (getPostBodyController?.errors && getPostBodyController?.touched) {
       @if (getPostBodyController?.hasError('errLength')) {

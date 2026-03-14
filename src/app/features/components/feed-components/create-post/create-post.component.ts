@@ -27,7 +27,7 @@ export class CreatePostComponent implements OnInit {
     private fb: FormBuilder,
     private postsService: PostsService,
     private sweetAlertService: SweetAlertService,
-    private profileService: ProfileService,
+    private authService: AuthService,
   ) {
     this.isloading = signal(false);
     this.selectedImgObj = null;
@@ -45,7 +45,8 @@ export class CreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getMyProfile();
+    this.userDetails.set(this.authService.getUserData());
+
     this.clearForm();
   }
   toggleEmojes() {
@@ -59,7 +60,6 @@ export class CreatePostComponent implements OnInit {
       next: (res) => {
         this.isloading.set(false);
         this.sweetAlertService.fireSwal(res?.message, 'success');
-        console.log('event is emiited from create post');
         this.postCreated.emit(`post created ${this.counter++}`);
         this.clearForm();
       },
@@ -121,16 +121,5 @@ export class CreatePostComponent implements OnInit {
   removeUploadedImg() {
     this.imgSrc = null;
     this.selectedImgObj = null;
-  }
-
-  getMyProfile() {
-    this.profileService.getMyProfile().subscribe({
-      next: (res: any) => {
-        this.userDetails.set(res?.data?.user);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
   }
 }
