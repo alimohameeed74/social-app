@@ -1,20 +1,23 @@
 import { environment } from './../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { Iregister } from '../models/Iregister.js';
 import { Ilogin } from '../models/Ilogin.js';
 import { IresetPassword } from '../models/Ireset-password.js';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Iuser } from '../../../features/models/users/Iuser.js';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private userData = signal<Iuser | null>(JSON.parse(localStorage.getItem('userData')!));
-  constructor(private httpClient: HttpClient) {
-    console.log('from auth service ', this.userData());
-  }
+  private userData: WritableSignal<Iuser | null> = signal(null);
+  private isUserLogged: WritableSignal<boolean> = signal(false);
+  constructor(
+    private httpClient: HttpClient,
+    private router: Router,
+  ) {}
   login(data: Ilogin): Observable<any> {
     return this.httpClient.post(`${environment.apiURL}/users/signin`, data);
   }
@@ -26,6 +29,7 @@ export class AuthService {
       headers: environment.headers,
     });
   }
+
   holdUserData(data: Iuser) {
     this.userData.set(data);
   }
@@ -34,6 +38,44 @@ export class AuthService {
   }
   deleteUserData() {
     this.userData.set(null);
-    localStorage.removeItem('id');
+  }
+
+  isUserLoggedIn() {
+    return this.isUserLogged();
+  }
+
+  userLogout() {
+    this.isUserLogged.set(false);
+  }
+
+  userLogin() {
+    this.isUserLogged.set(true);
+  }
+
+  init() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      if (this.isTokenExpired(token)) {
+        this.deleteUserData();
+        this.userLogout();
+        this.router.navigate(['/']);
+      } else {
+        this.userLogin();
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+          this.holdUserData(JSON.parse(userData));
+        }
+        this.router.navigate(['/main']);
+      }
+    } else {
+      this.deleteUserData();
+      this.userLogout();
+      this.router.navigate(['/']);
+    }
+  }
+
+  isTokenExpired(token: string): boolean {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now(); // if true => token expired
   }
 }

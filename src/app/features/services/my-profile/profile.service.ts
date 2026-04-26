@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.js';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { IaccountUser } from '../../models/account-user/Iaccount-user.js';
 
 @Injectable({
   providedIn: 'root',
@@ -9,10 +10,15 @@ import { Observable } from 'rxjs';
 export class ProfileService {
   constructor(private httpClient: HttpClient) {}
 
-  getMyProfile(): Observable<any> {
-    return this.httpClient.get(`${environment.apiURL}/users/profile-data`, {
-      headers: environment.headers,
-    });
+  getMyProfile(): Observable<IaccountUser> {
+    return this.httpClient
+      .get<{ success: string; message: string; data: IaccountUser }>(
+        `${environment.apiURL}/users/profile-data`,
+        {
+          headers: environment.headers,
+        },
+      )
+      .pipe(map((res) => res.data));
   }
   getUserProfile(userId: string): Observable<any> {
     return this.httpClient.get(`${environment.apiURL}/users/${userId}/profile`, {

@@ -1,7 +1,8 @@
 import { SweetAlertService } from './../../../services/sweet-alert/sweet-alert.service';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   AbstractControl,
+  FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -14,41 +15,42 @@ import { Router } from '@angular/router';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [ReactiveFormsModule, LoaderComponent],
+  imports: [ReactiveFormsModule],
 })
 export class RegisterComponent implements OnInit {
-  maxDate: string = '';
-  hidePassword: boolean;
-  isloading: any;
-  hideConfirmPassword: boolean;
+  maxDate: WritableSignal<string> = signal('');
+  hidePassword: WritableSignal<boolean> = signal(true);
+  isloading: WritableSignal<boolean> = signal(false);
+  hideConfirmPassword: WritableSignal<boolean> = signal(true);
   registerForm: FormGroup;
   constructor(
     private authService: AuthService,
     private SweetAlertService: SweetAlertService,
     private router: Router,
+    private fb: FormBuilder,
   ) {
-    this.isloading = signal(false);
     const today = new Date();
-    this.maxDate = today.toISOString().split('T')[0];
-    this.registerForm = new FormGroup(
+    this.maxDate.set(today.toISOString().split('T')[0]);
+    this.registerForm = this.fb.group(
       {
-        name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        email: new FormControl('', [Validators.required, Validators.email]),
-        dateOfBirth: new FormControl(today.toISOString().split('T')[0], Validators.required),
-        gender: new FormControl('male'),
-        password: new FormControl('', [
-          Validators.required,
-          Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
-        ]),
-        rePassword: new FormControl(''),
+        name: ['', [Validators.required, Validators.minLength(3)]],
+        username: ['', [Validators.required, Validators.minLength(3)]],
+        email: ['', [Validators.required, Validators.email]],
+        dateOfBirth: [today.toISOString().split('T')[0], Validators.required],
+        gender: ['male'],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
+          ],
+        ],
+        rePassword: [''],
       },
       {
         validators: [this.checkPasswords],
       },
     );
-    this.hidePassword = true;
-    this.hideConfirmPassword = true;
   }
   createAccount() {
     if (this.registerForm.valid) {
@@ -67,8 +69,13 @@ export class RegisterComponent implements OnInit {
         error: (err) => {
           this.isloading.set(false);
           this.SweetAlertService.fireSwal(err?.error?.message, 'error');
-          if (err?.status === 409) {
+          if (!navigator.onLine) {
+            this.SweetAlertService.fireSwal('No Internet', 'error');
+          } else if (err?.statusCode === 409) {
             this.router.navigate(['/auth']);
+            this.SweetAlertService.fireSwal(err?.message, 'error');
+          } else {
+            this.SweetAlertService.fireSwal(err?.message, 'error');
           }
         },
       });
@@ -85,15 +92,15 @@ export class RegisterComponent implements OnInit {
       password: '',
       rePassword: '',
     });
-    this.hidePassword = true;
-    this.hideConfirmPassword = true;
+    this.hidePassword.set(true);
+    this.hideConfirmPassword.set(true);
     this.isloading.set(false);
   }
   showPassword() {
-    this.hidePassword = !this.hidePassword;
+    this.hidePassword.update((s) => !s);
   }
   showConfirmPassword() {
-    this.hideConfirmPassword = !this.hideConfirmPassword;
+    this.hideConfirmPassword.update((s) => !s);
   }
   ngOnInit() {
     this.ClearForm();
