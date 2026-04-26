@@ -64,7 +64,7 @@
       <i class="fa-solid fa-bars"></i>
       <div
         class="absolute top-full inset-e-0 w-50 font-semibold mt-3 p-3 flex-col text-start border border-gray-200 rounded-xl bg-white text-[12px]"
-        [class]="toggler ? 'flex' : 'hidden'"
+        [class]="toggler() ? 'flex' : 'hidden'"
       >
         <span
           (click)="goTo('/main/profile')"

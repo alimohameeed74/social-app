@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit {
           if (res?.data?.token) {
             localStorage.setItem('token', res?.data?.token);
             localStorage.setItem('userData', JSON.stringify(res?.data?.user));
+            this.authService.userLogin();
             this.authService.holdUserData(res?.data?.user);
             this.sweetAlertService.fireSwal(res?.message, 'success');
             this.router.navigate(['/main']);
@@ -84,5 +85,15 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.ClearForm();
+    this.init();
+  }
+
+  init() {
+    if (this.authService.isUserLoggedIn()) {
+      this.sweetAlertService.fireSwal('already sign in', 'success');
+      this.router.navigate(['/main']);
+    } else {
+      return;
+    }
   }
 }

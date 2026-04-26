@@ -52,6 +52,7 @@ export class RegisterComponent implements OnInit {
       },
     );
   }
+
   createAccount() {
     if (this.registerForm.valid) {
       this.isloading.set(true);
@@ -61,14 +62,14 @@ export class RegisterComponent implements OnInit {
           if (res?.data?.token) {
             localStorage.setItem('token', res?.data?.token);
             localStorage.setItem('userData', JSON.stringify(res?.data?.user));
+            this.authService.userLogin();
             this.authService.holdUserData(res?.data?.user);
             this.SweetAlertService.fireSwal('user created successfully.', 'success');
-            this.router.navigate(['/main/feed']);
+            this.router.navigate(['/main']);
           }
         },
         error: (err) => {
           this.isloading.set(false);
-          this.SweetAlertService.fireSwal(err?.error?.message, 'error');
           if (!navigator.onLine) {
             this.SweetAlertService.fireSwal('No Internet', 'error');
           } else if (err?.statusCode === 409) {
@@ -104,6 +105,7 @@ export class RegisterComponent implements OnInit {
   }
   ngOnInit() {
     this.ClearForm();
+    this.init();
   }
   get getNameController() {
     return this.registerForm.get('name');
@@ -139,5 +141,14 @@ export class RegisterComponent implements OnInit {
     }
 
     return null;
+  }
+
+  init() {
+    if (this.authService.isUserLoggedIn()) {
+      this.SweetAlertService.fireSwal('already sign in', 'success');
+      this.router.navigate(['/main']);
+    } else {
+      return;
+    }
   }
 }

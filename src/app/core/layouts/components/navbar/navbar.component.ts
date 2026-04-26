@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { FlowbiteService } from '../../../services/flowbit/flowbit.service';
 import { initFlowbite } from 'flowbite';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -14,37 +14,33 @@ import { NotificationsService } from '../../../../features/services/notification
   imports: [RouterLink, RouterLinkActive],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  userDetails = signal<Iuser | null>(null);
-  toggler: boolean;
-  notificationsCount = signal<number>(0);
+  userDetails: WritableSignal<Iuser | null> = signal(null);
+  toggler: WritableSignal<boolean> = signal(false);
+  notificationsCount: WritableSignal<number> = signal(0);
   interval: any;
   constructor(
     private flowbiteService: FlowbiteService,
     private router: Router,
     private authService: AuthService,
-    private profileService: ProfileService,
     private notificationsService: NotificationsService,
-  ) {
-    this.userDetails.set(null);
-    this.toggler = false;
-  }
+  ) {}
   ngOnInit(): void {
     this.flowbiteService.loadFlowbite((flowbite) => {
       initFlowbite();
     });
-    this.userDetails.set(this.authService.getUserData());
-    this.getNotifications();
-    this.interval = setInterval(() => {
-      this.getNotifications();
-    }, 10000);
+    this.userDetails.set(this.userData);
+    // this.getNotifications();
+    // this.interval = setInterval(() => {
+    //   this.getNotifications();
+    // }, 10000);
   }
   toggle() {
-    this.toggler = !this.toggler;
+    this.toggler.update((s) => !s);
   }
   goTo(link: string = '/') {
     if (link === '/') {
-      localStorage.removeItem('token');
       this.authService.deleteUserData();
+      this.authService.userLogout();
     }
     this.router.navigate([link]);
   }
@@ -65,5 +61,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     clearInterval(this.interval);
+  }
+
+  get userData() {
+    return this.authService.getUserData();
   }
 }

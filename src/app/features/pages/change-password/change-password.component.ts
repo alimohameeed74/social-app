@@ -1,8 +1,14 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { Router } from '@angular/router';
-import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component.js';
 import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
 import { AuthService } from '../../../core/auth/services/auth.service.js';
 
@@ -10,28 +16,34 @@ import { AuthService } from '../../../core/auth/services/auth.service.js';
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.css'],
-  imports: [ReactiveFormsModule, LoaderComponent],
+  imports: [ReactiveFormsModule],
 })
 export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
-  hidePassword: boolean;
-  hideNewPassword: boolean;
-  isloading: any;
+  hidePassword: WritableSignal<boolean> = signal(true);
+  hideNewPassword: WritableSignal<boolean> = signal(true);
+  isloading: WritableSignal<boolean> = signal(false);
   constructor(
     private authService: AuthService,
     private router: Router,
     private sweetAlertService: SweetAlertService,
+    private fb: FormBuilder,
   ) {
-    this.isloading = signal(false);
-    this.changePasswordForm = new FormGroup({
-      password: new FormControl('', Validators.required),
-      newPassword: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
-      ]),
-    });
-    this.hidePassword = true;
-    this.hideNewPassword = true;
+    this.changePasswordForm = this.fb.group(
+      {
+        password: ['', Validators.required],
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
+          ],
+        ],
+      },
+      {
+        validators: [this.checkEqualPasswords],
+      },
+    );
   }
   changePassword() {
     if (this.changePasswordForm.valid) {
@@ -48,8 +60,11 @@ export class ChangePasswordComponent implements OnInit {
         },
         error: (err) => {
           this.isloading.set(false);
-
-          this.sweetAlertService.fireSwal('invalid operation', 'error');
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal(err?.message, 'error');
+          }
         },
       });
     }
@@ -59,29 +74,37 @@ export class ChangePasswordComponent implements OnInit {
       password: '',
       newPassword: '',
     });
-    this.hidePassword = true;
-    this.hideNewPassword = true;
+    this.hidePassword.set(true);
+    this.hideNewPassword.set(true);
     this.isloading.set(false);
   }
   ngOnInit() {
     this.clearForm();
-    const lS = localStorage.getItem('token');
-    if (!lS) {
-      this.sweetAlertService.fireSwal('please sign in first', 'warning');
-      this.router.navigate(['/auth']);
-    }
   }
 
   showPassword() {
-    this.hidePassword = !this.hidePassword;
+    this.hidePassword.update((s) => !s);
   }
   showNewPassword() {
-    this.hideNewPassword = !this.hideNewPassword;
+    this.hideNewPassword.update((s) => !s);
   }
   get getPasswordController() {
     return this.changePasswordForm.get('password');
   }
   get getNewPasswordController() {
     return this.changePasswordForm.get('newPassword');
+  }
+
+  checkEqualPasswords(form: AbstractControl) {
+    const password = form.get('password')?.value;
+    const newPassword = form.get('newPassword')?.value;
+
+    if (password === newPassword) {
+      return {
+        match: true,
+      };
+    } else {
+      return null;
+    }
   }
 }

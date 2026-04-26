@@ -25,9 +25,7 @@ export class AuthService {
     return this.httpClient.post(`${environment.apiURL}/users/signup`, data);
   }
   resetPassword(data: IresetPassword): Observable<any> {
-    return this.httpClient.patch(`${environment.apiURL}/users/change-password`, data, {
-      headers: environment.headers,
-    });
+    return this.httpClient.patch(`${environment.apiURL}/users/change-password`, data);
   }
 
   holdUserData(data: Iuser) {
@@ -38,6 +36,7 @@ export class AuthService {
   }
   deleteUserData() {
     this.userData.set(null);
+    localStorage.removeItem('userData');
   }
 
   isUserLoggedIn() {
@@ -46,6 +45,7 @@ export class AuthService {
 
   userLogout() {
     this.isUserLogged.set(false);
+    localStorage.removeItem('token');
   }
 
   userLogin() {
@@ -65,12 +65,10 @@ export class AuthService {
         if (userData) {
           this.holdUserData(JSON.parse(userData));
         }
-        this.router.navigate(['/main']);
       }
     } else {
       this.deleteUserData();
       this.userLogout();
-      this.router.navigate(['/']);
     }
   }
 
