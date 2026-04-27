@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
-import { FlowbiteService } from '../../../services/flowbit/flowbit.service';
 import { initFlowbite } from 'flowbite';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service.js';
@@ -19,15 +18,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   notificationsCount: WritableSignal<number> = signal(0);
   interval: any;
   constructor(
-    private flowbiteService: FlowbiteService,
     private router: Router,
     private authService: AuthService,
     private notificationsService: NotificationsService,
   ) {}
   ngOnInit(): void {
-    this.flowbiteService.loadFlowbite((flowbite) => {
-      initFlowbite();
-    });
     this.userDetails.set(this.userData);
     // this.getNotifications();
     // this.interval = setInterval(() => {

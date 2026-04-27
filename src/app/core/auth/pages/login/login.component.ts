@@ -1,5 +1,5 @@
 import { SweetAlertService } from './../../../services/sweet-alert/sweet-alert.service';
-import { Component, computed, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service.js';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -16,11 +17,11 @@ import { AuthService } from '../../services/auth.service.js';
   styleUrls: ['./login.component.css'],
   imports: [ReactiveFormsModule, RouterLink],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   hidePassword: WritableSignal<boolean> = signal(true);
   isloading: WritableSignal<boolean> = signal(false);
-
+  private destroy$ = new Subject<void>();
   constructor(
     private authService: AuthService,
     private sweetAlertService: SweetAlertService,
@@ -41,27 +42,30 @@ export class LoginComponent implements OnInit {
   Login() {
     if (this.loginForm.valid) {
       this.isloading.set(true);
-      this.authService.login(this.loginForm.value).subscribe({
-        next: (res: any) => {
-          this.isloading.set(false);
-          if (res?.data?.token) {
-            localStorage.setItem('token', res?.data?.token);
-            localStorage.setItem('userData', JSON.stringify(res?.data?.user));
-            this.authService.userLogin();
-            this.authService.holdUserData(res?.data?.user);
-            this.sweetAlertService.fireSwal(res?.message, 'success');
-            this.router.navigate(['/main']);
-          }
-        },
-        error: (err) => {
-          this.isloading.set(false);
-          if (!navigator.onLine) {
-            this.sweetAlertService.fireSwal('No Internet', 'error');
-          } else {
-            this.sweetAlertService.fireSwal(err?.message, 'error');
-          }
-        },
-      });
+      this.authService
+        .login(this.loginForm.value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            this.isloading.set(false);
+            if (res?.data?.token) {
+              localStorage.setItem('token', res?.data?.token);
+              localStorage.setItem('userData', JSON.stringify(res?.data?.user));
+              this.authService.userLogin();
+              this.authService.holdUserData(res?.data?.user);
+              this.sweetAlertService.fireSwal(res?.message, 'success');
+              this.router.navigate(['/main']);
+            }
+          },
+          error: (err) => {
+            this.isloading.set(false);
+            if (!navigator.onLine) {
+              this.sweetAlertService.fireSwal('No Internet', 'error');
+            } else {
+              this.sweetAlertService.fireSwal(err?.message, 'error');
+            }
+          },
+        });
     }
   }
   ClearForm() {
@@ -72,6 +76,7 @@ export class LoginComponent implements OnInit {
     });
     this.hidePassword.set(true);
     this.isloading.set(false);
+    this.destroy$.next();
   }
   showPassword() {
     this.hidePassword.update((s) => !s);
@@ -90,10 +95,14 @@ export class LoginComponent implements OnInit {
 
   init() {
     if (this.authService.isUserLoggedIn()) {
-      this.sweetAlertService.fireSwal('already sign in', 'success');
+      this.sweetAlertService.fireSwal('already signed in', 'success');
       this.router.navigate(['/main']);
     } else {
       return;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

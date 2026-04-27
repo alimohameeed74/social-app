@@ -1,10 +1,19 @@
 @if (isLoading()) {
   <app-loader></app-loader>
+} @else if (offline()) {
+  <app-internet-connection></app-internet-connection>
+} @else if (errorHappend()) {
+  <app-error></app-error>
+} @else {
+  @if (profileDetails()) {
+    <!-- Header -->
+    <app-profile-header
+      [accoutUser]="profileDetails()"
+      [isFollowing]="isFollowing()"
+    ></app-profile-header>
+    <!-- Posts -->
+    <section class="space-y-4">
+      <app-profile-posts></app-profile-posts>
+    </section>
+  }
 }
-
-<!-- Header -->
-<app-profile-header [accoutUser]="profileDetails" [isFollowing]="isFollowing"></app-profile-header>
-<!-- Posts -->
-<section class="space-y-4">
-  <app-profile-posts></app-profile-posts>
-</section>

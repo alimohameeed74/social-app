@@ -1,95 +1,105 @@
 import { SweetAlertService } from './../../../../core/services/sweet-alert/sweet-alert.service';
-import { Component, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, signal, WritableSignal } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
 import { TimeService } from '../../../../core/services/time/time.service.js';
 import { ContentLoaderComponent } from '../../../../core/layouts/components/content-loader/content-loader.component';
 import { ProfileService } from '../../../services/my-profile/profile.service.js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
+import { ProfilePostCardComponent } from '../../shared-components/profile-post-card/profile-post-card.component';
+import { AuthService } from '../../../../core/auth/services/auth.service.js';
+import { Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-profile-posts',
   templateUrl: './profile-posts.component.html',
   styleUrls: ['./profile-posts.component.css'],
-  imports: [ContentLoaderComponent, LoaderComponent],
+  imports: [ContentLoaderComponent, ProfilePostCardComponent],
 })
-export class ProfilePostsComponent implements OnInit {
-  posts = signal<Ipost[]>([]);
-  isLoading = signal<boolean>(false);
-  otherUser: boolean;
-  contentLoading = signal<boolean>(false);
+export class ProfilePostsComponent implements OnInit, OnDestroy {
+  posts: WritableSignal<Ipost[]> = signal([]);
+  isLoading: WritableSignal<boolean> = signal(false);
+  offline: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<boolean> = signal(false);
+  otherUser: WritableSignal<boolean> = signal(false);
+  contentLoading: WritableSignal<boolean> = signal(false);
+  emptyPosts: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
   constructor(
     private profileService: ProfileService,
     private timeService: TimeService,
     private sweetAlertService: SweetAlertService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-  ) {
-    this.otherUser = false;
-  }
+    private authService: AuthService,
+  ) {}
 
   ngOnInit() {
-    this.posts.set([]);
     this.activatedRoute.paramMap.subscribe((param) => {
       const id = param.get('id');
-      if (!id) {
-        this.getPosts();
-      } else {
-        this.otherUser = true;
+      if (id && id !== this.authService.getUserData()?._id) {
+        this.otherUser.set(true);
         this.getUserPosts(id);
+      } else {
+        this.getPosts(); // My Posts
       }
     });
   }
 
   getPosts() {
-    this.profileService.getMyposts().subscribe({
-      next: (res: any) => {
-        this.contentLoading.set(true);
-        this.posts.set(res?.data?.posts);
-      },
-      error: (err) => {
-        this.contentLoading.set(true);
-        this.posts.set([]);
-
-        console.log(err);
-      },
-    });
+    this.contentLoading.set(true);
+    this.profileService
+      .getMyposts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Ipost[]) => {
+          this.contentLoading.set(false);
+          if (res.length === 0) {
+            this.emptyPosts.set(true);
+          } else {
+            this.posts.set(res);
+          }
+        },
+        error: (err) => {
+          this.contentLoading.set(false);
+          this.posts.set([]);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+          }
+        },
+      });
   }
 
   getUserPosts(id: string) {
-    this.profileService.getUserposts(id).subscribe({
-      next: (res: any) => {
-        this.contentLoading.set(true);
-        this.posts.set(res?.data?.posts);
-      },
-      error: (err) => {
-        this.contentLoading.set(true);
-        this.posts.set([]);
-        console.log(err);
-      },
-    });
+    this.contentLoading.set(true);
+
+    this.profileService
+      .getUserposts(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Ipost[]) => {
+          this.contentLoading.set(false);
+          if (res.length === 0) {
+            this.emptyPosts.set(true);
+          } else {
+            this.posts.set(res);
+          }
+        },
+        error: (err) => {
+          this.contentLoading.set(false);
+          this.posts.set([]);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+          }
+        },
+      });
   }
-  timeFormat(data: string) {
-    return this.timeService.formatDate(data);
-  }
-  goToPostDetails(id: string) {
-    this.router.navigate([`/main/posts/${id}`]);
-  }
-  deletePost(id: string) {
-    this.isLoading.set(true);
-    this.profileService.deletePost(id).subscribe({
-      next: (res: any) => {
-        this.isLoading.set(false);
-        this.sweetAlertService.fireSwal(res?.message, 'success');
-        this.getPosts();
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.sweetAlertService.fireSwal(err?.message, 'error');
-      },
-    });
-  }
-  editPost(postId: string) {
-    this.router.navigate([`/main/edit-posts/${postId}`]);
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

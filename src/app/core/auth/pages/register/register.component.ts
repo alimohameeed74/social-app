@@ -1,5 +1,5 @@
 import { SweetAlertService } from './../../../services/sweet-alert/sweet-alert.service';
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,19 +10,21 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../services/auth.service.js';
 import { LoaderComponent } from '../../../layouts/components/loader/loader.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Subject, take, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   maxDate: WritableSignal<string> = signal('');
   hidePassword: WritableSignal<boolean> = signal(true);
   isloading: WritableSignal<boolean> = signal(false);
   hideConfirmPassword: WritableSignal<boolean> = signal(true);
   registerForm: FormGroup;
+  private destroy$ = new Subject<void>();
   constructor(
     private authService: AuthService,
     private SweetAlertService: SweetAlertService,
@@ -56,30 +58,33 @@ export class RegisterComponent implements OnInit {
   createAccount() {
     if (this.registerForm.valid) {
       this.isloading.set(true);
-      this.authService.register(this.registerForm.value).subscribe({
-        next: (res: any) => {
-          this.isloading.set(false);
-          if (res?.data?.token) {
-            localStorage.setItem('token', res?.data?.token);
-            localStorage.setItem('userData', JSON.stringify(res?.data?.user));
-            this.authService.userLogin();
-            this.authService.holdUserData(res?.data?.user);
-            this.SweetAlertService.fireSwal('user created successfully.', 'success');
-            this.router.navigate(['/main']);
-          }
-        },
-        error: (err) => {
-          this.isloading.set(false);
-          if (!navigator.onLine) {
-            this.SweetAlertService.fireSwal('No Internet', 'error');
-          } else if (err?.statusCode === 409) {
-            this.router.navigate(['/auth']);
-            this.SweetAlertService.fireSwal(err?.message, 'error');
-          } else {
-            this.SweetAlertService.fireSwal(err?.message, 'error');
-          }
-        },
-      });
+      this.authService
+        .register(this.registerForm.value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            this.isloading.set(false);
+            if (res?.data?.token) {
+              localStorage.setItem('token', res?.data?.token);
+              localStorage.setItem('userData', JSON.stringify(res?.data?.user));
+              this.authService.userLogin();
+              this.authService.holdUserData(res?.data?.user);
+              this.SweetAlertService.fireSwal('user created successfully.', 'success');
+              this.router.navigate(['/main']);
+            }
+          },
+          error: (err) => {
+            this.isloading.set(false);
+            if (!navigator.onLine) {
+              this.SweetAlertService.fireSwal('No Internet', 'error');
+            } else if (err?.statusCode === 409) {
+              this.router.navigate(['/auth']);
+              this.SweetAlertService.fireSwal(err?.message, 'error');
+            } else {
+              this.SweetAlertService.fireSwal(err?.message, 'error');
+            }
+          },
+        });
     }
   }
   ClearForm() {
@@ -96,6 +101,7 @@ export class RegisterComponent implements OnInit {
     this.hidePassword.set(true);
     this.hideConfirmPassword.set(true);
     this.isloading.set(false);
+    this.destroy$.next();
   }
   showPassword() {
     this.hidePassword.update((s) => !s);
@@ -145,10 +151,14 @@ export class RegisterComponent implements OnInit {
 
   init() {
     if (this.authService.isUserLoggedIn()) {
-      this.SweetAlertService.fireSwal('already sign in', 'success');
+      this.SweetAlertService.fireSwal('already signed in', 'success');
       this.router.navigate(['/main']);
     } else {
       return;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

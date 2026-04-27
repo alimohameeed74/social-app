@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,6 +11,7 @@ import {
 import { Router } from '@angular/router';
 import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
 import { AuthService } from '../../../core/auth/services/auth.service.js';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -18,11 +19,12 @@ import { AuthService } from '../../../core/auth/services/auth.service.js';
   styleUrls: ['./change-password.component.css'],
   imports: [ReactiveFormsModule],
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit, OnDestroy {
   changePasswordForm: FormGroup;
   hidePassword: WritableSignal<boolean> = signal(true);
   hideNewPassword: WritableSignal<boolean> = signal(true);
   isloading: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -77,6 +79,7 @@ export class ChangePasswordComponent implements OnInit {
     this.hidePassword.set(true);
     this.hideNewPassword.set(true);
     this.isloading.set(false);
+    this.destroy$.next();
   }
   ngOnInit() {
     this.clearForm();
@@ -106,5 +109,9 @@ export class ChangePasswordComponent implements OnInit {
     } else {
       return null;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

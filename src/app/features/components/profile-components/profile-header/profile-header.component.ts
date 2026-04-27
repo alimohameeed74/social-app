@@ -1,51 +1,75 @@
 import { FollowSuggestionsService } from './../../../services/follow-suggestions/follow-suggestions.service';
-import { Component, Input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  InputSignal,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { IaccountUser } from '../../../models/account-user/Iaccount-user.js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
 import { AuthService } from '../../../../core/auth/services/auth.service.js';
+import { User } from '../../../models/users/Ianother-user-profile.js';
+import { Subject, takeUntil } from 'rxjs';
+import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile-header',
   templateUrl: './profile-header.component.html',
   styleUrls: ['./profile-header.component.css'],
-  imports: [LoaderComponent],
 })
-export class ProfileHeaderComponent implements OnInit {
-  @Input() accoutUser: IaccountUser | null = null;
-  @Input() postsNum: number | null = null;
-  otherUser: boolean;
-  @Input() isFollowing: boolean | null = null;
-  isLoading = signal<boolean>(false);
+export class ProfileHeaderComponent implements OnInit, OnChanges, OnDestroy {
+  accoutUser: InputSignal<User | null> = input.required();
+  otherUser: WritableSignal<boolean> = signal(false);
+  isFollowing: InputSignal<boolean | null> = input.required();
+  followUser: WritableSignal<boolean | null> = signal(false);
+  isLoading: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
   constructor(
     private activatedRoute: ActivatedRoute,
     private followSuggestionsService: FollowSuggestionsService,
     private router: Router,
     private authService: AuthService,
-  ) {
-    this.otherUser = false;
-  }
+    private sweetAlertService: SweetAlertService,
+  ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+  ngOnChanges(): void {
     this.activatedRoute.paramMap.subscribe((param) => {
       const id = param.get('id');
       if (id && id !== this.authService.getUserData()?._id) {
-        this.otherUser = true;
+        this.otherUser.set(true);
       }
     });
+    this.followUser.set(this.isFollowing());
   }
   followUnfollowUser(userId: string) {
     this.isLoading.set(true);
-    this.followSuggestionsService.followUnfollowUser(userId).subscribe({
-      next: (res: any) => {
-        this.isLoading.set(false);
-        this.isFollowing = !this.isFollowing;
-        this.router.navigate([`/main/profile/${userId}`]);
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        console.log(err);
-      },
-    });
+    this.followSuggestionsService
+      .followUnfollowUser(userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isLoading.set(false);
+          this.followUser.update((s) => !s);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal(err?.message, 'error');
+          }
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }
