@@ -1,25 +1,36 @@
-import { TimeService } from '../../../core/services/time/time.service.js';
 import { Inotification } from '../../models/notification/Inotification.js';
 import { NotificationsService } from './../../services/notifications/notifications.service';
-import { Component, OnInit, signal } from '@angular/core';
-import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component';
-import { Router } from '@angular/router';
-import { ContentLoaderComponent } from '../../../core/layouts/components/content-loader/content-loader.component';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { NotificationCardComponent } from '../../components/notification-components/notification-card/notification-card.component';
+import { InternetConnectionComponent } from '../../../shared/components/internet-connection/internet-connection.component';
+import { ErrorComponent } from '../../../shared/components/error/error.component';
+import { NotificationSkeltonComponent } from '../../../shared/components/notification-skelton/notification-skelton.component';
+import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
 
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.css'],
-  imports: [LoaderComponent, ContentLoaderComponent],
+  imports: [
+    NotificationCardComponent,
+    InternetConnectionComponent,
+    ErrorComponent,
+    NotificationSkeltonComponent,
+  ],
 })
 export class NotificationsComponent implements OnInit {
-  isloading = signal<boolean>(false);
-  notifications = signal<Inotification[]>([]);
-  readCount: number = 0;
+  offline: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<boolean> = signal(false);
+  isLoading: WritableSignal<boolean> = signal(false);
+  isLoading_: WritableSignal<boolean> = signal(false);
+  emptyNotifications: WritableSignal<boolean> = signal(false);
+  notifications: WritableSignal<Inotification[]> = signal([]);
+  readCount: WritableSignal<number> = signal(0);
+  private destroy$ = new Subject<void>();
   constructor(
     private notificationsService: NotificationsService,
-    private timeService: TimeService,
-    private router: Router,
+    private sweetAlertService: SweetAlertService,
   ) {}
 
   ngOnInit() {
@@ -27,55 +38,59 @@ export class NotificationsComponent implements OnInit {
   }
 
   getMyNotifications() {
-    this.isloading.set(true);
-    this.notificationsService.getAllNotifications().subscribe({
-      next: (res: any) => {
-        this.isloading.set(false);
-        this.notifications.set(res?.data?.notifications);
-        this.getNumberOfReadNotifications();
-      },
-      error: (err) => {
-        this.isloading.set(false);
-        console.log(err);
-      },
-    });
-  }
+    this.isLoading.set(true);
+    this.notificationsService
+      .getAllNotifications()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: { notifications: Inotification[]; total: number }) => {
+          this.isLoading.set(false);
+          if (res.total === 0) {
+            this.emptyNotifications.set(true);
+          } else {
+            this.emptyNotifications.set(false);
+            this.notifications.set(res.notifications);
+            this.readCount.set(res.total);
+          }
+        },
+        error: (err) => {
+          this.isLoading.set(false);
 
-  formatTime(data: string) {
-    return this.timeService.timeAgoShort(data);
-  }
-  readNotification(id: string) {
-    this.notificationsService.makeNotificationAsRead(id).subscribe({
-      next: (res: any) => {
-        this.getMyNotifications();
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+          this.readCount.set(0);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+            this.notifications.set([]);
+            this.emptyNotifications.set(true);
+          }
+        },
+      });
   }
 
   readAllNotifications() {
-    this.notificationsService.makeAllNotificationAsRead().subscribe({
-      next: (res) => {
-        this.getMyNotifications();
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-  }
-  getNumberOfReadNotifications() {
-    this.notifications().forEach((elem) => {
-      if (elem.isRead) this.readCount++;
-    });
+    this.isLoading_.set(true);
+    this.notificationsService
+      .makeAllNotificationAsRead()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.isLoading_.set(false);
+          this.emptyNotifications.set(true);
+          this.readCount.set(0);
+        },
+        error: (err) => {
+          this.isLoading_.set(false);
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal(err?.message, 'error');
+          }
+        },
+      });
   }
 
-  goToPostDetails(id: string) {
-    this.router.navigate([`/main/posts/${id}`]);
-  }
-
-  goToProfile(userId: string) {
-    this.router.navigate([`/main/profile/${userId}`]);
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

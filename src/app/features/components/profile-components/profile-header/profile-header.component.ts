@@ -9,14 +9,11 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { IaccountUser } from '../../../models/account-user/Iaccount-user.js';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
 import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { User } from '../../../models/users/Ianother-user-profile.js';
 import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile-header',
@@ -33,7 +30,6 @@ export class ProfileHeaderComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private followSuggestionsService: FollowSuggestionsService,
-    private router: Router,
     private authService: AuthService,
     private sweetAlertService: SweetAlertService,
   ) {}

@@ -1,0 +1,43 @@
+<div class="border border-gray-200 p-2.5 rounded-xl bg-white flex flex-col mb-2">
+  <div class="flex items-center justify-between gap-2">
+    <button
+      (click)="goToProfile(suggestion()._id)"
+      type="button"
+      class="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50 cursor-pointer"
+    >
+      <img
+        [alt]="suggestion().name"
+        class="h-10 w-10 rounded-full object-cover"
+        [src]="suggestion().photo"
+      />
+      <div class="min-w-0">
+        <p class="truncate text-sm font-bold text-slate-900 hover:underline">
+          {{ suggestion().name }}
+        </p>
+        <p class="truncate text-xs text-slate-500">@{{ suggestion().username }}</p>
+      </div>
+    </button>
+    <button
+      (click)="followUser(suggestion()._id)"
+      [disabled]="isLoading()"
+      class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-50 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff] cursor-pointer"
+    >
+      @if (!isLoading()) {
+        <i class="fa-solid" [class]="isFollowing() ? 'fa-check' : 'fa-user-plus'"></i>
+      }
+
+      <i [class]="isLoading() ? 'fa-solid fa-spin fa-spinner' : 'hidden'"></i>
+      {{ isFollowing() ? 'Following' : 'Follow' }}
+    </button>
+  </div>
+  <div class="mt-2 flex items-center gap-2 text-[11px] font-normal">
+    <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5"
+      >{{ suggestion().followersCount }} followers</span
+    >
+    <span
+      [class]="suggestion().mutualFollowersCount === 0 ? 'hidden' : 'inline'"
+      class="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#1877f2]"
+      >{{ suggestion().mutualFollowersCount }} mutuals</span
+    >
+  </div>
+</div>

@@ -5,57 +5,31 @@
       Suggested Friends
     </span>
     <span
-      class="size-5 flex justify-center items-center rounded-[50%] bg-gray-200 text-gray-500 text-[12px]"
+      [class]="suggestions().length === 0 ? 'hidden' : 'flex'"
+      class="size-5 justify-center items-center rounded-[50%] bg-gray-200 text-gray-500 text-[12px]"
       >{{ suggestions().length }}</span
     >
   </h2>
-  <div class="h-100 xl:h-140 scrollbar-hide overflow-y-auto">
+  <div
+    [class]="isLoading() || offline() || error() ? 'hidden' : ''"
+    class="h-100 xl:h-140 scrollbar-hide overflow-y-auto"
+  >
     @for (suggestion of suggestions(); track $index) {
-      <div class="border border-gray-200 p-2.5 rounded-xl bg-white flex flex-col mb-2">
-        <div class="flex items-center justify-between gap-2">
-          <button
-            (click)="goToProfile(suggestion._id)"
-            type="button"
-            class="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50 cursor-pointer"
-          >
-            <img
-              [alt]="suggestion.name"
-              class="h-10 w-10 rounded-full object-cover"
-              [src]="suggestion.photo"
-            />
-            <div class="min-w-0">
-              <p class="truncate text-sm font-bold text-slate-900 hover:underline">
-                {{ suggestion.name }}
-              </p>
-              <p class="truncate text-xs text-slate-500">@{{ suggestion.username }}</p>
-            </div>
-          </button>
-          <button
-            (click)="followUser(suggestion._id)"
-            class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff] cursor-pointer"
-          >
-            <i class="fa-solid fa-user-plus me-1"></i>Follow
-          </button>
-        </div>
-        <div class="mt-2 flex items-center gap-2 text-[11px] font-normal">
-          <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5"
-            >{{ suggestion.followersCount }} followers</span
-          >
-          <span
-            [class]="suggestion.mutualFollowersCount === 0 ? 'hidden' : 'inline'"
-            class="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#1877f2]"
-            >{{ suggestion.mutualFollowersCount }} mutuals</span
-          >
-          <!-- <span class="rounded-full text-gray-500 bg-gray-200 px-2 py-0.5">199 followers</span> -->
-        </div>
-      </div>
-    } @empty {
-      <app-content-loader></app-content-loader>
+      <app-suggestion-card [suggestion]="suggestion"></app-suggestion-card>
     }
   </div>
+  <app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
+  <app-error [class.hidden]="!error()"></app-error>
+  <div [class]="!isLoading() ? 'hidden' : ''" class="h-100 xl:h-140 scrollbar-hide overflow-y-auto">
+    @for (skelton of [1, 2, 3, 4, 5, 6]; track $index) {
+      <app-suggestion-skelton></app-suggestion-skelton>
+    }
+  </div>
+
   <button
     (click)="goToSuggestions()"
-    class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100"
+    [class]="suggestions().length === 0 ? 'hidden' : 'inline-flex'"
+    class="mt-3 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-100"
   >
     View more
   </button>

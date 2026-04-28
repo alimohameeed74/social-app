@@ -1,28 +1,39 @@
 import { FollowSuggestionsService } from './../../services/follow-suggestions/follow-suggestions.service';
 import { Location } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { LoaderComponent } from '../../../core/layouts/components/loader/loader.component';
 import { Isuggest } from '../../models/follow-suggestions/Isuggest.js';
 import { count } from 'console';
 import { Router } from '@angular/router';
+import { SuggestionCardComponent } from '../../components/feed-components/suggestion-card/suggestion-card.component';
+import { SuggestionSkeltonComponent } from '../../../shared/components/suggestion-skelton/suggestion-skelton.component';
+import { Subject, takeUntil } from 'rxjs';
+import { InternetConnectionComponent } from '../../../shared/components/internet-connection/internet-connection.component';
+import { ErrorComponent } from '../../../shared/components/error/error.component';
 
 @Component({
   selector: 'app-suggestions',
   templateUrl: './suggestions.component.html',
   styleUrls: ['./suggestions.component.css'],
-  imports: [LoaderComponent],
+  imports: [
+    SuggestionCardComponent,
+    SuggestionSkeltonComponent,
+    InternetConnectionComponent,
+    ErrorComponent,
+  ],
 })
-export class SuggestionsComponent implements OnInit {
-  counter: number;
-  isLoading = signal<boolean>(false);
-  suggestions = signal<Isuggest[]>([]);
+export class SuggestionsComponent implements OnInit, OnDestroy {
+  counter: WritableSignal<number> = signal(1);
+  suggestions: WritableSignal<Isuggest[]> = signal([]);
+  offline: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<boolean> = signal(false);
+  isLoading: WritableSignal<boolean> = signal(false);
+  isLoading_: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
   constructor(
     private location: Location,
     private followSuggestionsService: FollowSuggestionsService,
-    private router: Router,
-  ) {
-    this.counter = 1;
-  }
+  ) {}
 
   ngOnInit() {
     this.getMySuggestions();
@@ -31,35 +42,40 @@ export class SuggestionsComponent implements OnInit {
     this.location.back();
   }
   getMySuggestions(limit: number = 1) {
-    this.isLoading.set(true);
+    if (limit === 1) {
+      this.isLoading.set(true);
+    } else {
+      this.isLoading_.set(true);
+    }
 
-    this.followSuggestionsService.getMoreFollowSuggestions(10 * limit).subscribe({
-      next: (res: any) => {
-        this.isLoading.set(false);
-        this.suggestions.set(res?.data?.suggestions);
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        console.log(err);
-      },
-    });
+    this.followSuggestionsService
+      .getMoreFollowSuggestions(10 * limit)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Isuggest[]) => {
+          this.isLoading.set(false);
+          this.isLoading_.set(false);
+          this.suggestions.set(res);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.isLoading_.set(false);
+          this.suggestions.set([]);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+          }
+        },
+      });
   }
 
   getMoreSuggestions() {
-    this.counter++;
-    this.getMySuggestions(this.counter);
+    this.counter.update((s) => (s += 1));
+    this.getMySuggestions(this.counter());
   }
-  goToProfile(id: string) {
-    this.router.navigate([`/main/profile/${id}`]);
-  }
-  followUser(userId: string) {
-    this.followSuggestionsService.followUnfollowUser(userId).subscribe({
-      next: (res: any) => {
-        this.getMySuggestions(this.counter);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

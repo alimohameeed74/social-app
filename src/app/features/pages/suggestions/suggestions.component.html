@@ -1,7 +1,3 @@
-@if (isLoading()) {
-  <app-loader></app-loader>
-}
-
 <section class="mx-auto max-w-4xl space-y-4">
   <button
     (click)="back()"
@@ -49,70 +45,36 @@
           All Suggested Friends
         </h1>
       </div>
-      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">{{
-        suggestions().length
-      }}</span>
+      <span
+        [class]="suggestions().length === 0 ? 'hidden' : 'flex'"
+        class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600"
+        >{{ suggestions().length }}</span
+      >
     </div>
 
-    <div class="grid gap-3 md:grid-cols-2">
+    <div
+      [class]="isLoading() || offline() || error() ? 'hidden' : ''"
+      class="grid gap-3 md:grid-cols-2"
+    >
       @for (suggest of suggestions(); track $index) {
-        <article class="rounded-xl border border-slate-200 p-3 cursor-pointer">
-          <div class="flex items-center justify-between gap-3">
-            <button
-              (click)="goToProfile(suggest._id)"
-              type="button"
-              class="flex min-w-0 items-center gap-3 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50"
-            >
-              <img
-                [alt]="suggest.name"
-                class="h-12 w-12 rounded-full object-cover"
-                [src]="suggest.photo"
-              />
-              <div class="min-w-0">
-                <p class="truncate text-sm font-bold text-slate-900 hover:underline">
-                  {{ suggest.name }}
-                </p>
-                <p class="truncate text-xs text-slate-500">@{{ suggest.username }}</p>
-              </div></button
-            ><button
-              (click)="followUser(suggest._id)"
-              class="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:opacity-60 bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff]"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-user-plus"
-                aria-hidden="true"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <line x1="19" x2="19" y1="8" y2="14"></line>
-                <line x1="22" x2="16" y1="11" y2="11"></line></svg
-              ><span class="hidden sm:inline">Follow</span>
-            </button>
-          </div>
-          <div class="mt-2 flex items-center gap-2 text-[11px] font-semibold text-slate-500">
-            <span class="rounded-full bg-slate-100 px-2 py-0.5"
-              >{{ suggest.followersCount }} followers</span
-            ><span class="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#1877f2]"
-              >{{ suggest.mutualFollowersCount }} mutual</span
-            >
-          </div>
-        </article>
+        <app-suggestion-card [suggestion]="suggest"></app-suggestion-card>
+      }
+    </div>
+    <app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
+    <app-error [class.hidden]="!error()"></app-error>
+    <div [class]="!isLoading() ? 'hidden' : ''" class="grid gap-3 md:grid-cols-2">
+      @for (skeltin of [1, 2, 3, 4, 5, 6]; track $index) {
+        <app-suggestion-skelton></app-suggestion-skelton>
       }
     </div>
     <button
       (click)="getMoreSuggestions()"
-      class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
+      [disabled]="isLoading_()"
+      [class]="suggestions().length === 0 ? 'hidden' : 'inline-flex'"
+      class="mt-4 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
     >
-      Load more users
+      <i [class]="isLoading_() ? 'fa-solid fa-spin fa-spinner' : 'hidden'"></i>
+      Load{{ isLoading_() ? 'ing' : '' }} more users
     </button>
   </section>
 </section>
