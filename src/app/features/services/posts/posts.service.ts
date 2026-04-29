@@ -51,8 +51,18 @@ export class PostsService {
       }>(`${environment.apiURL}/posts/${postId}/bookmark`, {})
       .pipe(map((res) => res.data.bookmarked));
   }
-  likeUnlikePost(postId: string): Observable<any> {
-    return this.httpClient.put(`${environment.apiURL}/posts/${postId}/like`, {});
+  likeUnlikePost(postId: string): Observable<number> {
+    return this.httpClient
+      .put<{
+        success: string;
+        message: string;
+        data: {
+          liked: boolean;
+          likesCount: number;
+          post: Ipost;
+        };
+      }>(`${environment.apiURL}/posts/${postId}/like`, {})
+      .pipe(map((res) => res.data.likesCount));
   }
   getPostLikes(postId: string): Observable<any> {
     return this.httpClient.get(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`, {

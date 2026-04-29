@@ -50,9 +50,10 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
   likeUnlikePost(id: string) {
     this.likeLoading.set(true);
     this.postsService.likeUnlikePost(id).subscribe({
-      next: (res: any) => {
+      next: (res: number) => {
         this.isLiked.update((s) => !s);
         this.likeLoading.set(false);
+        this.post().likesCount = res;
       },
       error: (err) => {
         this.likeLoading.set(false);
