@@ -14,7 +14,7 @@
         [src]="notification().actor.photo"
       /></button
     ><span
-      class="absolute -bottom-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white ring-2 ring-white text-emerald-600"
+      class="absolute text-xs -bottom-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white ring-2 ring-white text-emerald-600"
     >
       <i
         [class]="
@@ -22,7 +22,9 @@
             ? 'fa-regular fa-heart text-red-600'
             : notification().type === 'comment_post'
               ? 'fa-regular fa-comment text-blue-500'
-              : 'fa-solid fa-crop-simple text-green-500'
+              : notification().type === 'follow_user'
+                ? 'fa-solid fa-user-plus text-violet-600'
+                : 'fa-solid fa-crop-simple text-green-500'
         "
       ></i>
     </span>
@@ -39,12 +41,13 @@
         </button>
         {{
           notification().type === 'like_post'
-            ? 'liked'
+            ? 'liked your post'
             : notification().type === 'comment_post'
-              ? 'commented on'
-              : 'shared'
+              ? 'commented on your post'
+              : notification().type === 'follow_user'
+                ? 'followed you'
+                : 'shared your post'
         }}
-        your post
       </p>
       <div class="flex items-center gap-1.5 sm:gap-2">
         <span class="text-xs font-semibold text-slate-500">{{

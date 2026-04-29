@@ -62,7 +62,6 @@ export class NotificationsComponent implements OnInit {
           } else {
             this.error.set(true);
             this.notifications.set([]);
-            this.emptyNotifications.set(true);
           }
         },
       });

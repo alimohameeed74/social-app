@@ -1,77 +1,66 @@
-import { SweetAlertService } from './../../../../core/services/sweet-alert/sweet-alert.service';
-import { TimeService } from './../../../../core/services/time/time.service';
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
 import { PostsService } from '../../../services/posts/posts.service.js';
-import { ContentLoaderComponent } from '../../../../core/layouts/components/content-loader/content-loader.component';
-import { Router, RouterLink } from '@angular/router';
-import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
+import { FeedPostCardComponent } from '../../shared-components/feed-post-card/feed-post-card.component';
+import { InternetConnectionComponent } from '../../../../shared/components/internet-connection/internet-connection.component';
+import { ErrorComponent } from '../../../../shared/components/error/error.component';
+import { Subject, takeUntil } from 'rxjs';
+import { FeedPostSkeltonComponent } from '../../../../shared/components/feed-post-skelton/feed-post-skelton.component';
 
 @Component({
   selector: 'app-posts-cards',
   templateUrl: './posts-cards.component.html',
   styleUrls: ['./posts-cards.component.css'],
-  imports: [ContentLoaderComponent, LoaderComponent, RouterLink],
+  imports: [
+    FeedPostCardComponent,
+    InternetConnectionComponent,
+    ErrorComponent,
+    FeedPostSkeltonComponent,
+  ],
 })
-export class PostsCardsComponent implements OnInit {
+export class PostsCardsComponent implements OnInit, OnDestroy {
   @Input() post: string = '';
-  posts = signal<Ipost[]>([]);
-  isLodaing = signal<boolean>(false);
-  isLiked: boolean = false;
-  constructor(
-    private postsService: PostsService,
-    private timeService: TimeService,
-    private router: Router,
-    private sweetAlertService: SweetAlertService,
-  ) {}
+  posts: WritableSignal<Ipost[]> = signal([]);
+  isLiked = signal<boolean>(false);
+  offline: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<boolean> = signal(false);
+  contentLoading: WritableSignal<boolean> = signal(false);
+  emptyPosts: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
+  constructor(private postsService: PostsService) {}
 
-  ngOnInit() {
-    this.posts.set([]);
-  }
+  ngOnInit() {}
   ngOnChanges(): void {
     this.getPosts();
   }
 
   getPosts() {
-    this.postsService.getAllPosts().subscribe({
-      next: (res: any) => {
-        this.posts.set(res?.data?.posts);
-      },
-      error: (err) => {
-        this.posts.set([]);
-        console.log(err);
-      },
-    });
+    this.contentLoading.set(true);
+    this.postsService
+      .getAllPosts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Ipost[]) => {
+          this.contentLoading.set(false);
+          if (res.length === 0) {
+            this.emptyPosts.set(true);
+          } else {
+            this.posts.set(res);
+          }
+        },
+        error: (err) => {
+          this.contentLoading.set(false);
+          this.posts.set([]);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+          }
+        },
+      });
   }
-  timeFormat(data: string) {
-    return this.timeService.timeAgoShort(data);
-  }
-  goToPostComments(id: string) {
-    this.router.navigate([`/main/posts/${id}`]);
-  }
-  toggleSavePost(id: string) {
-    this.isLodaing.set(true);
-    this.postsService.togglePost(id).subscribe({
-      next: (res: any) => {
-        this.isLodaing.set(false);
-        this.getPosts();
-      },
-      error: (err) => {
-        this.isLodaing.set(false);
-        console.log(err);
-      },
-    });
-  }
-  likeUnlikePost(id: string) {
-    this.postsService.likeUnlikePost(id).subscribe({
-      next: (res: any) => {
-        this.isLiked = true;
-        this.sweetAlertService.fireSwal(res?.message, 'success');
-        this.getPosts();
-      },
-      error: (err) => {
-        this.sweetAlertService.fireSwal(err?.message, 'error');
-      },
-    });
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

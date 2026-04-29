@@ -5,6 +5,7 @@ import { AuthService } from '../../../auth/services/auth.service.js';
 import { Iuser } from '../../../../features/models/users/Iuser.js';
 import { ProfileService } from '../../../../features/services/my-profile/profile.service.js';
 import { NotificationsService } from '../../../../features/services/notifications/notifications.service.js';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',

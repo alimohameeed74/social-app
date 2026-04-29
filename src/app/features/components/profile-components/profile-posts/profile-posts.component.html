@@ -1,7 +1,15 @@
-@for (post of posts(); track $index) {
-  <app-profile-post-card [post]="post"></app-profile-post-card>
-}
-<app-content-loader [class]="contentLoading() ? '' : 'hidden'"></app-content-loader>
+<div>
+  @for (post of posts(); track post._id) {
+    <app-profile-post-card (isDeleted)="handlechange()" [post]="post"></app-profile-post-card>
+  }
+</div>
+<app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
+<app-error [class.hidden]="!error()"></app-error>
+<div [class]="contentLoading() ? '' : 'hidden'">
+  @for (skelton of [1, 2, 3]; track $index) {
+    <app-post-skelton></app-post-skelton>
+  }
+</div>
 <div
   [class]="emptyPosts() ? '' : 'hidden'"
   class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm"

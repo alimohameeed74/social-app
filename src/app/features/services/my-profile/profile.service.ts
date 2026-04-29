@@ -49,8 +49,6 @@ export class ProfileService {
       .pipe(map((res) => res.data.posts));
   }
   deletePost(postId: string): Observable<any> {
-    return this.httpClient.delete(`${environment.apiURL}/posts/${postId}`, {
-      headers: environment.headers,
-    });
+    return this.httpClient.delete(`${environment.apiURL}/posts/${postId}`);
   }
 }

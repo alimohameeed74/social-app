@@ -3,18 +3,19 @@ import {
   input,
   InputSignal,
   OnChanges,
+  OnDestroy,
   OnInit,
+  output,
   signal,
-  SimpleChanges,
   WritableSignal,
 } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../services/my-profile/profile.service';
-import { TimeService } from '../../../../core/services/time/time.service';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeShortAgo.pipe';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-profile-post-card',
@@ -22,13 +23,16 @@ import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeSh
   styleUrls: ['./profile-post-card.component.css'],
   imports: [TimeShortAgoPipe],
 })
-export class ProfilePostCardComponent implements OnInit, OnChanges {
+export class ProfilePostCardComponent implements OnInit, OnChanges, OnDestroy {
   post: InputSignal<Ipost> = input.required();
   otherUser: WritableSignal<boolean> = signal(false);
+  private destroy$ = new Subject<void>();
+  isLoading: WritableSignal<boolean> = signal(false);
+  hide: WritableSignal<boolean> = signal(false);
+  isDeleted = output<string>();
   constructor(
     private router: Router,
     private profileService: ProfileService,
-    private timeService: TimeService,
     private sweetAlertService: SweetAlertService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
@@ -46,44 +50,32 @@ export class ProfilePostCardComponent implements OnInit, OnChanges {
   goToPostDetails(id: string) {
     this.router.navigate([`/main/posts/${id}`]);
   }
-  deletePost(id: string) {
-    // this.isLoading.set(true);
-    this.profileService.deletePost(id).subscribe({
-      next: (res: any) => {
-        // this.isLoading.set(false);
-        this.sweetAlertService.fireSwal(res?.message, 'success');
-        // this.getPosts();
-      },
-      error: (err) => {
-        // this.isLoading.set(false);
-        this.sweetAlertService.fireSwal(err?.message, 'error');
-      },
-    });
-  }
 
   editPost(i: string) {}
+  deletePost(id: string) {
+    this.isLoading.set(true);
+    this.profileService
+      .deletePost(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isLoading.set(false);
+          this.hide.set(true);
+          this.isDeleted.emit('deleted');
+        },
+        error: (err) => {
+          this.isLoading.set(false);
 
-  timeFormat(data: string) {
-    return this.timeService.formatDate(data);
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal(err?.message, 'error');
+          }
+        },
+      });
   }
-  // goToPostDetails(id: string) {
-  //   this.router.navigate([`/main/posts/${id}`]);
-  // }
-  // deletePost(id: string) {
-  //   this.isLoading.set(true);
-  //   this.profileService.deletePost(id).subscribe({
-  //     next: (res: any) => {
-  //       this.isLoading.set(false);
-  //       this.sweetAlertService.fireSwal(res?.message, 'success');
-  //       this.getPosts();
-  //     },
-  //     error: (err) => {
-  //       this.isLoading.set(false);
-  //       this.sweetAlertService.fireSwal(err?.message, 'error');
-  //     },
-  //   });
-  // }
-  // editPost(postId: string) {
-  //   this.router.navigate([`/main/edit-posts/${postId}`]);
-  // }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 }

@@ -1,7 +1,7 @@
 import { Icomment } from './../../models/comments/Icomment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.js';
 import { Ipost } from '../../models/posts/Ipost.js';
 
@@ -17,9 +17,15 @@ export class PostsService {
     });
   }
   getAllPosts(): Observable<Ipost[]> {
-    return this.httpClient.get<Ipost[]>(`${environment.apiURL}/posts`, {
-      headers: environment.headers,
-    });
+    return this.httpClient
+      .get<{
+        success: string;
+        message: string;
+        data: {
+          posts: Ipost[];
+        };
+      }>(`${environment.apiURL}/posts`)
+      .pipe(map((res) => res.data.posts));
   }
   getPostComments(postId: string): Observable<Icomment[]> {
     return this.httpClient.get<Icomment[]>(
@@ -34,23 +40,19 @@ export class PostsService {
       headers: environment.headers,
     });
   }
-  togglePost(postId: string): Observable<any> {
-    return this.httpClient.put(
-      `${environment.apiURL}/posts/${postId}/bookmark`,
-      {},
-      {
-        headers: environment.headers,
-      },
-    );
+  togglePost(postId: string): Observable<boolean> {
+    return this.httpClient
+      .put<{
+        sunccess: string;
+        message: string;
+        data: {
+          bookmarked: boolean;
+        };
+      }>(`${environment.apiURL}/posts/${postId}/bookmark`, {})
+      .pipe(map((res) => res.data.bookmarked));
   }
   likeUnlikePost(postId: string): Observable<any> {
-    return this.httpClient.put(
-      `${environment.apiURL}/posts/${postId}/like`,
-      {},
-      {
-        headers: environment.headers,
-      },
-    );
+    return this.httpClient.put(`${environment.apiURL}/posts/${postId}/like`, {});
   }
   getPostLikes(postId: string): Observable<any> {
     return this.httpClient.get(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`, {

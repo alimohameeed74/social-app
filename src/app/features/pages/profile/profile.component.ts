@@ -11,6 +11,7 @@ import { InternetConnectionComponent } from '../../../shared/components/internet
 import { ErrorComponent } from '../../../shared/components/error/error.component';
 import { ProfilePostCardComponent } from '../../components/shared-components/profile-post-card/profile-post-card.component';
 import { Ipost } from '../../models/posts/Ipost.js';
+import { NotificationsService } from '../../services/notifications/notifications.service.js';
 
 @Component({
   selector: 'app-profile',
@@ -32,6 +33,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   offline: WritableSignal<boolean> = signal(false);
   errorHappend: WritableSignal<boolean> = signal(false);
   otherUser: WritableSignal<boolean> = signal(false);
+  counter = 0;
   constructor(
     private profileService: ProfileService,
     private authService: AuthService,

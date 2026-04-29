@@ -1,20 +1,24 @@
-import { SweetAlertService } from './../../../../core/services/sweet-alert/sweet-alert.service';
 import { Component, Input, OnDestroy, OnInit, Output, signal, WritableSignal } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
-import { TimeService } from '../../../../core/services/time/time.service.js';
-import { ContentLoaderComponent } from '../../../../core/layouts/components/content-loader/content-loader.component';
 import { ProfileService } from '../../../services/my-profile/profile.service.js';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component';
 import { ProfilePostCardComponent } from '../../shared-components/profile-post-card/profile-post-card.component';
 import { AuthService } from '../../../../core/auth/services/auth.service.js';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { PostSkeltonComponent } from '../../../../shared/components/post-skelton/post-skelton.component';
+import { InternetConnectionComponent } from '../../../../shared/components/internet-connection/internet-connection.component';
+import { ErrorComponent } from '../../../../shared/components/error/error.component';
 
 @Component({
   selector: 'app-profile-posts',
   templateUrl: './profile-posts.component.html',
   styleUrls: ['./profile-posts.component.css'],
-  imports: [ContentLoaderComponent, ProfilePostCardComponent],
+  imports: [
+    ProfilePostCardComponent,
+    PostSkeltonComponent,
+    InternetConnectionComponent,
+    ErrorComponent,
+  ],
 })
 export class ProfilePostsComponent implements OnInit, OnDestroy {
   posts: WritableSignal<Ipost[]> = signal([]);
@@ -25,11 +29,10 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
   contentLoading: WritableSignal<boolean> = signal(false);
   emptyPosts: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
+  postsCount: WritableSignal<number> = signal(0);
+  deleteCount: WritableSignal<number> = signal(0);
   constructor(
     private profileService: ProfileService,
-    private timeService: TimeService,
-    private sweetAlertService: SweetAlertService,
-    private router: Router,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
   ) {}
@@ -54,6 +57,7 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: Ipost[]) => {
           this.contentLoading.set(false);
+          this.postsCount.set(res.length);
           if (res.length === 0) {
             this.emptyPosts.set(true);
           } else {
@@ -97,6 +101,14 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+
+  handlechange() {
+    this.deleteCount.update((s) => s + 1);
+    if (this.deleteCount() === this.postsCount()) {
+      this.posts.set([]);
+      this.emptyPosts.set(true);
+    }
   }
 
   ngOnDestroy(): void {
