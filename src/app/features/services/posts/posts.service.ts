@@ -12,9 +12,7 @@ export class PostsService {
   constructor(private httpClient: HttpClient) {}
 
   createPost(data: FormData): Observable<any> {
-    return this.httpClient.post(`${environment.apiURL}/posts`, data, {
-      headers: environment.headers,
-    });
+    return this.httpClient.post(`${environment.apiURL}/posts`, data);
   }
   getAllPosts(): Observable<Ipost[]> {
     return this.httpClient
@@ -70,8 +68,6 @@ export class PostsService {
     });
   }
   updatePost(postId: string, data: FormData): Observable<any> {
-    return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data, {
-      headers: environment.headers,
-    });
+    return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data);
   }
 }

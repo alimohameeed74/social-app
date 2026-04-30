@@ -14,14 +14,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../services/my-profile/profile.service';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeShortAgo.pipe';
 import { Subject, takeUntil } from 'rxjs';
+import { FormatTimePipe } from '../../../../shared/pipes/format-time/formatTime.pipe.js';
 
 @Component({
   selector: 'app-profile-post-card',
   templateUrl: './profile-post-card.component.html',
   styleUrls: ['./profile-post-card.component.css'],
-  imports: [TimeShortAgoPipe],
+  imports: [FormatTimePipe],
 })
 export class ProfilePostCardComponent implements OnInit, OnChanges, OnDestroy {
   post: InputSignal<Ipost> = input.required();

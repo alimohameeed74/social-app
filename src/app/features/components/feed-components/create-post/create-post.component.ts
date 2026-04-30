@@ -1,38 +1,41 @@
 import { AuthService } from './../../../../core/auth/services/auth.service';
-import { Component, OnInit, Output, signal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  output,
+  Output,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { LoaderComponent } from '../../../../core/layouts/components/loader/loader.component.js';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { EventEmitter } from '@angular/core';
-import { ProfileService } from '../../../services/my-profile/profile.service.js';
 import { Iuser } from '../../../models/users/Iuser.js';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-create-post',
   templateUrl: './create-post.component.html',
   styleUrls: ['./create-post.component.css'],
-  imports: [PickerComponent, ReactiveFormsModule, LoaderComponent],
+  imports: [PickerComponent, ReactiveFormsModule],
 })
-export class CreatePostComponent implements OnInit {
-  @Output() postCreated = new EventEmitter();
-  counter: number = 0;
-  userDetails = signal<Iuser | null>(null);
-  showEmojes: boolean;
+export class CreatePostComponent implements OnInit, OnDestroy {
+  postCreated = output<string>();
+  counter: WritableSignal<number> = signal(0);
+  userDetails: WritableSignal<Iuser | null> = signal(null);
+  showEmojes: WritableSignal<boolean> = signal(false);
   postForm: FormGroup;
-  selectedImgObj: File | null;
-  isloading: any;
-  imgSrc: string | ArrayBuffer | null;
+  selectedImgObj: WritableSignal<File | null> = signal(null);
+  isloading: WritableSignal<boolean> = signal(false);
+  imgSrc: WritableSignal<string | ArrayBuffer | null> = signal(null);
+  private destroy$ = new Subject<void>();
   constructor(
     private fb: FormBuilder,
     private postsService: PostsService,
     private sweetAlertService: SweetAlertService,
     private authService: AuthService,
   ) {
-    this.isloading = signal(false);
-    this.selectedImgObj = null;
-    this.showEmojes = false;
-    this.imgSrc = null;
     this.postForm = this.fb.group(
       {
         privacy: ['public'],
@@ -45,29 +48,42 @@ export class CreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userDetails.set(this.authService.getUserData());
-
+    this.userDetails.set(this.userData);
     this.clearForm();
   }
+
+  get userData() {
+    return this.authService.getUserData();
+  }
+
   toggleEmojes() {
-    this.showEmojes = !this.showEmojes;
+    this.showEmojes.update((s) => !s);
   }
   createPost() {
-    this.showEmojes = false;
+    console.log(this.createFormData().entries());
+    this.showEmojes.set(false);
     this.isloading.set(true);
 
-    this.postsService.createPost(this.createFormData()).subscribe({
-      next: (res) => {
-        this.isloading.set(false);
-        this.sweetAlertService.fireSwal(res?.message, 'success');
-        this.postCreated.emit(`post created ${this.counter++}`);
-        this.clearForm();
-      },
-      error: (err) => {
-        this.isloading.set(false);
-        this.sweetAlertService.fireSwal('failed to create post', 'error');
-      },
-    });
+    this.postsService
+      .createPost(this.createFormData())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.isloading.set(false);
+          this.sweetAlertService.fireSwal(res?.message, 'success');
+          this.counter.update((s) => s + 1);
+          this.postCreated.emit(`post created ${this.counter()}`);
+          this.clearForm();
+        },
+        error: (err) => {
+          this.isloading.set(false);
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal('failed to create post', 'error');
+          }
+        },
+      });
   }
   get getPostBodyController() {
     return this.postForm.get('body');
@@ -82,14 +98,14 @@ export class CreatePostComponent implements OnInit {
       privacy: 'public',
       body: '',
     });
-    this.selectedImgObj = null;
-    this.imgSrc = null;
+    this.selectedImgObj.set(null);
+    this.imgSrc.set(null);
   }
 
   uploadImg(event: any) {
-    this.selectedImgObj = event?.target?.files[0];
-    if (this.selectedImgObj) {
-      this.imgSrc = URL.createObjectURL(this.selectedImgObj);
+    this.selectedImgObj.set(event?.target?.files[0]);
+    if (this.selectedImgObj()) {
+      this.imgSrc.set(URL.createObjectURL(this.selectedImgObj()!));
     }
   }
   createFormData() {
@@ -97,8 +113,8 @@ export class CreatePostComponent implements OnInit {
     if (this.postForm.get('body')?.value) {
       formData.append('body', this.postForm.get('body')?.value);
     }
-    if (this.selectedImgObj) {
-      formData.append('image', this.selectedImgObj);
+    if (this.selectedImgObj()) {
+      formData.append('image', this.selectedImgObj()!);
     }
     formData.append('privacy', this.postForm.get('privacy')?.value);
     return formData;
@@ -119,7 +135,11 @@ export class CreatePostComponent implements OnInit {
   }
 
   removeUploadedImg() {
-    this.imgSrc = null;
-    this.selectedImgObj = null;
+    this.imgSrc.set(null);
+    this.selectedImgObj.set(null);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }
