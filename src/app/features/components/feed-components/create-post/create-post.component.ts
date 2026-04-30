@@ -1,13 +1,5 @@
 import { AuthService } from './../../../../core/auth/services/auth.service';
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  output,
-  Output,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, output, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { PostsService } from '../../../services/posts/posts.service.js';
@@ -60,7 +52,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.showEmojes.update((s) => !s);
   }
   createPost() {
-    console.log(this.createFormData().entries());
     this.showEmojes.set(false);
     this.isloading.set(true);
 

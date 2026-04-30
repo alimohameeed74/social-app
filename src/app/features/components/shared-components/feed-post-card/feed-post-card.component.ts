@@ -4,6 +4,7 @@ import {
   InputSignal,
   OnChanges,
   OnInit,
+  output,
   signal,
   SimpleChanges,
   WritableSignal,
@@ -33,6 +34,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
   private destroy$ = new Subject<void>();
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
+  deletePostEvent = output<string>();
   constructor(
     private router: Router,
     private postsService: PostsService,
@@ -110,6 +112,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
         next: (res: any) => {
           this.deleteLoading.set(false);
           this.isDeleted.set(true);
+          this.deletePostEvent.emit('deleted');
         },
         error: (err) => {
           this.deleteLoading.set(false);

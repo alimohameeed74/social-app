@@ -9,16 +9,16 @@ import {
 } from '@angular/core';
 import { Inotification } from '../../../models/notification/Inotification.js';
 import { Router } from '@angular/router';
-import { FormatTimePipe } from '../../../../shared/pipes/format-time/formatTime.pipe.js';
 import { NotificationsService } from '../../../services/notifications/notifications.service.js';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
+import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeShortAgo.pipe.js';
 
 @Component({
   selector: 'app-notification-card',
   templateUrl: './notification-card.component.html',
   styleUrls: ['./notification-card.component.css'],
-  imports: [FormatTimePipe],
+  imports: [TimeShortAgoPipe],
 })
 export class NotificationCardComponent implements OnInit, OnDestroy {
   notification: InputSignal<Inotification> = input.required();

@@ -34,9 +34,15 @@ export class PostsService {
     );
   }
   getPostDetails(postId: string): Observable<Ipost> {
-    return this.httpClient.get<Ipost>(`${environment.apiURL}/posts/${postId}`, {
-      headers: environment.headers,
-    });
+    return this.httpClient
+      .get<{
+        success: string;
+        message: string;
+        data: {
+          post: Ipost;
+        };
+      }>(`${environment.apiURL}/posts/${postId}`)
+      .pipe(map((res) => res.data.post));
   }
   togglePost(postId: string): Observable<boolean> {
     return this.httpClient
