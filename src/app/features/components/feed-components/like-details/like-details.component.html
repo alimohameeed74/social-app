@@ -1,29 +1,34 @@
-@for (like of likes(); track $index) {
-  <div class="rounded-xl border border-slate-200 bg-white shadow-sm w-fit mt-3">
-    <div class="space-y-1">
-      <a
-        class="flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-100"
-        [routerLink]="`/main/profile/${like._id}`"
-        data-discover="true"
-        ><img [alt]="like.name" class="h-10 w-10 rounded-full object-cover" [src]="like.photo" />
-        <div class="min-w-0">
-          <p class="truncate text-sm font-bold text-slate-900">{{ like.name }}</p>
-          <p class="truncate text-xs text-slate-500">@{{ like.name }}</p>
-        </div></a
-      >
+<div class="mb-4 px-4">
+  @for (like of likes(); track $index) {
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm w-fit mt-3">
+      <div class="space-y-1">
+        <a
+          class="flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-100"
+          [routerLink]="`/main/profile/${like._id}`"
+          data-discover="true"
+          ><img [alt]="like.name" class="h-10 w-10 rounded-full object-cover" [src]="like.photo" />
+          <div class="min-w-0">
+            <p class="truncate text-sm font-bold text-slate-900">{{ like.name }}</p>
+            <p class="truncate text-xs text-slate-500">@{{ like.username }}</p>
+          </div></a
+        >
+      </div>
     </div>
-  </div>
-} @empty {
-  <app-content-loader [class]="likesLoading() ? 'hidden' : ''"></app-content-loader>
+  }
+</div>
+
+<app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
+<app-error [class.hidden]="!error()"></app-error>
+<div class="mb-4 px-4" [class]="likesLoading() ? '' : 'hidden'">
+  @for (skelton of [1, 2, 3]; track $index) {
+    <app-like-card-skelton></app-like-card-skelton>
+  }
+</div>
+<div [class]="emptyLikes() ? '' : 'hidden'" class="rounded-2xl bg-white px-4 py-8 text-center">
   <div
-    [class]="likesLoading() ? '' : 'hidden'"
-    class="rounded-2xl border border-slate-200 bg-white px-4 py-8 text-center"
+    class="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#eef3ff] text-[#1877f2]"
   >
-    <div
-      class="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#eef3ff] text-[#1877f2]"
-    >
-      <i class="fa-regular fa-thumbs-up"></i>
-    </div>
-    <p class="text-lg font-extrabold text-slate-800">No Likes yet</p>
+    <i class="fa-regular fa-thumbs-up"></i>
   </div>
-}
+  <p class="text-lg font-extrabold text-slate-800">No Likes yet</p>
+</div>

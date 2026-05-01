@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { EditPostComponent } from './edit-post.component';
+import { SharedPostCardComponent } from './shared-post-card.component';
 
-describe('EditPostComponent', () => {
-  let component: EditPostComponent;
-  let fixture: ComponentFixture<EditPostComponent>;
+describe('SharedPostCardComponent', () => {
+  let component: SharedPostCardComponent;
+  let fixture: ComponentFixture<SharedPostCardComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditPostComponent ]
+      declarations: [ SharedPostCardComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditPostComponent);
+    fixture = TestBed.createComponent(SharedPostCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

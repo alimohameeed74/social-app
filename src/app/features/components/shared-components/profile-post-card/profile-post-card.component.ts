@@ -16,12 +16,13 @@ import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-a
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 import { FormatTimePipe } from '../../../../shared/pipes/format-time/formatTime.pipe.js';
+import { SharedPostCardComponent } from '../shared-post-card/shared-post-card.component';
 
 @Component({
   selector: 'app-profile-post-card',
   templateUrl: './profile-post-card.component.html',
   styleUrls: ['./profile-post-card.component.css'],
-  imports: [FormatTimePipe],
+  imports: [FormatTimePipe, SharedPostCardComponent],
 })
 export class ProfilePostCardComponent implements OnInit, OnChanges, OnDestroy {
   post: InputSignal<Ipost> = input.required();

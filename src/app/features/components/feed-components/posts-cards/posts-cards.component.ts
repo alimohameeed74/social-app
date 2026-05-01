@@ -1,4 +1,13 @@
-import { Component, Input, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  input,
+  Input,
+  InputSignal,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { FeedPostCardComponent } from '../../shared-components/feed-post-card/feed-post-card.component';
@@ -19,9 +28,8 @@ import { FeedPostSkeltonComponent } from '../../../../shared/components/feed-pos
   ],
 })
 export class PostsCardsComponent implements OnInit, OnDestroy {
-  @Input() post: string = '';
+  post: InputSignal<string> = input.required();
   posts: WritableSignal<Ipost[]> = signal([]);
-  isLiked = signal<boolean>(false);
   offline: WritableSignal<boolean> = signal(false);
   error: WritableSignal<boolean> = signal(false);
   contentLoading: WritableSignal<boolean> = signal(false);

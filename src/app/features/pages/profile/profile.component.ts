@@ -9,9 +9,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { IanotherUserProfile, User } from '../../models/users/Ianother-user-profile.js';
 import { InternetConnectionComponent } from '../../../shared/components/internet-connection/internet-connection.component';
 import { ErrorComponent } from '../../../shared/components/error/error.component';
-import { ProfilePostCardComponent } from '../../components/shared-components/profile-post-card/profile-post-card.component';
-import { Ipost } from '../../models/posts/Ipost.js';
-import { NotificationsService } from '../../services/notifications/notifications.service.js';
 
 @Component({
   selector: 'app-profile',

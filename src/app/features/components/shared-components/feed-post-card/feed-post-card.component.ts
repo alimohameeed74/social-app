@@ -18,23 +18,28 @@ import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { Subject, takeUntil } from 'rxjs';
 import { ProfileService } from '../../../services/my-profile/profile.service.js';
 import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeShortAgo.pipe.js';
+import { SharedPostCardComponent } from '../shared-post-card/shared-post-card.component';
+import { SharedPostModalComponent } from '../shared-post-modal/shared-post-modal.component';
 
 @Component({
   selector: 'app-feed-post-card',
   templateUrl: './feed-post-card.component.html',
   styleUrls: ['./feed-post-card.component.css'],
-  imports: [RouterLink, TimeShortAgoPipe],
+  imports: [RouterLink, TimeShortAgoPipe, SharedPostCardComponent, SharedPostModalComponent],
 })
 export class FeedPostCardComponent implements OnInit, OnChanges {
+  type: WritableSignal<string> = signal('Share post');
   post: InputSignal<Ipost> = input.required();
   isLoading: WritableSignal<boolean> = signal(false);
   deleteLoading: WritableSignal<boolean> = signal(false);
+  modalOpened: WritableSignal<boolean> = signal(false);
   likeLoading: WritableSignal<boolean> = signal(false);
   isLiked: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
   deletePostEvent = output<string>();
+  sharedPostEvent = output<string>();
   constructor(
     private router: Router,
     private postsService: PostsService,
@@ -102,7 +107,6 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
       });
   }
 
-  editPost(i: string) {}
   deletePost(id: string) {
     this.deleteLoading.set(true);
     this.profileService
@@ -126,7 +130,27 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
       });
   }
 
+  closeModal() {
+    this.modalOpened.set(false);
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  sharePost(event: boolean) {
+    this.closeModal();
+    this.sharedPostEvent.emit('post shared');
+  }
+  openShareModal() {
+    this.type.set('Share post');
+    this.openModal();
+  }
+  openModal() {
+    this.modalOpened.set(true);
+  }
+  openLikeModal() {
+    this.type.set('likes');
+    this.openModal();
   }
 }

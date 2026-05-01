@@ -1,0 +1,45 @@
+<div class="mx-4 my-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+  <div class="p-3">
+    <div class="mb-2 flex items-center gap-2">
+      <img
+        [alt]="post().user.name"
+        class="h-9 w-9 rounded-full object-cover"
+        [src]="post().user.photo"
+      />
+      <div class="min-w-0">
+        <p class="truncate text-sm font-bold text-slate-900">{{ post().user.name }}</p>
+        <p class="truncate text-xs text-slate-500">@{{ post().user.username }}</p>
+      </div>
+      <button
+        (click)="goToPostDetails(post()._id)"
+        class="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-[#1877f2] hover:bg-[#e7f3ff]"
+      >
+        Original Post<svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-external-link"
+          aria-hidden="true"
+        >
+          <path d="M15 3h6v6"></path>
+          <path d="M10 14 21 3"></path>
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        </svg>
+      </button>
+    </div>
+    <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-800">{{ post().body }}</p>
+  </div>
+  @if (post().image) {
+    <div class="border-t border-slate-200">
+      <img alt="Shared post" class="max-h-55 w-full object-cover" [src]="post().image" /><span
+        class="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/10"
+      ></span>
+    </div>
+  }
+</div>

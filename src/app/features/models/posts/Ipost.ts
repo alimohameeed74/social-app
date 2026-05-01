@@ -7,7 +7,7 @@ export interface Ipost {
   image: string;
   privacy: string;
   user: Iuser;
-  sharedPost: any;
+  sharedPost: Ipost;
   likes: string[];
   createdAt: string;
   commentsCount: number;

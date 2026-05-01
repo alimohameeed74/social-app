@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { CreatePostComponent } from '../../components/feed-components/create-post/create-post.component';
 import { PostsCardsComponent } from '../../components/feed-components/posts-cards/posts-cards.component.js';
 import { FollowSuggestionComponent } from '../../components/feed-components/follow-suggestion/follow-suggestion.component';
@@ -9,12 +9,10 @@ import { FollowSuggestionComponent } from '../../components/feed-components/foll
   imports: [CreatePostComponent, PostsCardsComponent, FollowSuggestionComponent],
 })
 export class FeedComponent implements OnInit {
-  postStatus: string;
-  constructor() {
-    this.postStatus = '';
-  }
+  postStatus: WritableSignal<string> = signal('');
+  constructor() {}
   ngOnInit(): void {}
   showPost(data: string) {
-    this.postStatus = data;
+    this.postStatus.set(data);
   }
 }

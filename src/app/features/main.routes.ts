@@ -22,15 +22,6 @@ export const routes: Routes = [
       ),
     title: 'Post Details',
   },
-  {
-    path: 'edit-posts/:id',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./components/feed-components/edit-post/edit-post.component').then(
-        (p) => p.EditPostComponent,
-      ),
-    title: 'Edit Post',
-  },
 
   {
     path: 'notifications',

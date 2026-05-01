@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.js';
 import { Ipost } from '../../models/posts/Ipost.js';
+import { Iuser } from '../../models/users/Iuser.js';
 
 @Injectable({
   providedIn: 'root',
@@ -68,12 +69,40 @@ export class PostsService {
       }>(`${environment.apiURL}/posts/${postId}/like`, {})
       .pipe(map((res) => res.data.likesCount));
   }
-  getPostLikes(postId: string): Observable<any> {
-    return this.httpClient.get(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`, {
-      headers: environment.headers,
-    });
+  getPostLikes(postId: string): Observable<Iuser[]> {
+    return this.httpClient
+      .get<{
+        success: boolean;
+        message: string;
+        data: { likes: Iuser[] };
+      }>(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`)
+      .pipe(map((res) => res.data.likes));
   }
-  updatePost(postId: string, data: FormData): Observable<any> {
-    return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data);
+  // updatePost(postId: string, data: FormData): Observable<any> {
+  //   return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data);
+  // }
+
+  sharePost(postId: string, data: { body: string }): Observable<string> {
+    if (data.body === '') {
+      return this.httpClient
+        .post<{
+          success: boolean;
+          message: string;
+          data: {
+            posts: Ipost;
+          };
+        }>(`${environment.apiURL}/posts/${postId}/share`, {})
+        .pipe(map((res) => res.message));
+    } else {
+      return this.httpClient
+        .post<{
+          success: boolean;
+          message: string;
+          data: {
+            posts: Ipost;
+          };
+        }>(`${environment.apiURL}/posts/${postId}/share`, data)
+        .pipe(map((res) => res.message));
+    }
   }
 }

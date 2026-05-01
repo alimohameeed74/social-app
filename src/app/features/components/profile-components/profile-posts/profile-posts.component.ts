@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PostSkeltonComponent } from '../../../../shared/components/post-skelton/post-skelton.component';
 import { InternetConnectionComponent } from '../../../../shared/components/internet-connection/internet-connection.component';
 import { ErrorComponent } from '../../../../shared/components/error/error.component';
+import { FeedPostCardComponent } from '../../shared-components/feed-post-card/feed-post-card.component';
 
 @Component({
   selector: 'app-profile-posts',
@@ -18,6 +19,7 @@ import { ErrorComponent } from '../../../../shared/components/error/error.compon
     PostSkeltonComponent,
     InternetConnectionComponent,
     ErrorComponent,
+    FeedPostCardComponent,
   ],
 })
 export class ProfilePostsComponent implements OnInit, OnDestroy {

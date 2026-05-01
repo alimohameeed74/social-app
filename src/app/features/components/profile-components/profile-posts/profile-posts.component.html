@@ -1,8 +1,15 @@
-<div>
+<div [class.hidden]="otherUser()">
   @for (post of posts(); track post._id) {
     <app-profile-post-card (isDeleted)="handlechange()" [post]="post"></app-profile-post-card>
   }
 </div>
+
+<div [class.hidden]="!otherUser()">
+  @for (post of posts(); track post._id) {
+    <app-feed-post-card [post]="post"></app-feed-post-card>
+  }
+</div>
+
 <app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
 <app-error [class.hidden]="!error()"></app-error>
 <div [class]="contentLoading() ? '' : 'hidden'">
