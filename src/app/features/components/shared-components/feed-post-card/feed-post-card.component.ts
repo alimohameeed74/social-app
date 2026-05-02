@@ -6,13 +6,11 @@ import {
   OnInit,
   output,
   signal,
-  SimpleChanges,
   WritableSignal,
 } from '@angular/core';
 import { Ipost } from '../../../models/posts/Ipost.js';
 import { Router, RouterLink } from '@angular/router';
 import { PostsService } from '../../../services/posts/posts.service.js';
-import { FormatTimePipe } from '../../../../shared/pipes/format-time/formatTime.pipe.js';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
 import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { Subject, takeUntil } from 'rxjs';
@@ -20,12 +18,19 @@ import { ProfileService } from '../../../services/my-profile/profile.service.js'
 import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeShortAgo.pipe.js';
 import { SharedPostCardComponent } from '../shared-post-card/shared-post-card.component';
 import { SharedPostModalComponent } from '../shared-post-modal/shared-post-modal.component';
+import { PostCommentsComponent } from '../../feed-components/post-comments/post-comments.component';
 
 @Component({
   selector: 'app-feed-post-card',
   templateUrl: './feed-post-card.component.html',
   styleUrls: ['./feed-post-card.component.css'],
-  imports: [RouterLink, TimeShortAgoPipe, SharedPostCardComponent, SharedPostModalComponent],
+  imports: [
+    RouterLink,
+    TimeShortAgoPipe,
+    SharedPostCardComponent,
+    SharedPostModalComponent,
+    PostCommentsComponent,
+  ],
 })
 export class FeedPostCardComponent implements OnInit, OnChanges {
   type: WritableSignal<string> = signal('Share post');
@@ -40,6 +45,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
   isDeleted: WritableSignal<boolean> = signal(false);
   deletePostEvent = output<string>();
   sharedPostEvent = output<string>();
+  showTopComment: WritableSignal<boolean> = signal(true);
   constructor(
     private router: Router,
     private postsService: PostsService,
@@ -152,5 +158,9 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
   openLikeModal() {
     this.type.set('likes');
     this.openModal();
+  }
+
+  viewAllComments() {
+    this.showTopComment.update((s) => !s);
   }
 }

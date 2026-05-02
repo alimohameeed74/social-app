@@ -1,6 +1,6 @@
 <article
   [class]="isDeleted() ? 'hidden' : ''"
-  class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm mb-3"
+  class="rounded-xl border border-slate-200 bg-white shadow-sm mb-3"
 >
   <div class="p-4">
     <div class="flex items-center gap-3">
@@ -214,6 +214,7 @@
       <i [class]="likeLoading() ? 'fa-solid fa-spinner fa-spin' : 'fa-regular fa-thumbs-up'"></i
       ><span>Like</span></button
     ><button
+      (click)="viewAllComments()"
       class="cursor-pointer flex items-center justify-center gap-1.5 rounded-md p-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:text-sm text-slate-600 hover:bg-slate-100"
     >
       <svg
@@ -258,6 +259,43 @@
       ><span>Share</span>
     </button>
   </div>
+
+  <!-- Top Comment -->
+  @if (post().topComment && showTopComment()) {
+    <div class="mx-4 mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+      <p class="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-500">Top Comment</p>
+      <div class="flex items-start gap-2">
+        <img
+          [alt]="post().topComment.commentCreator.name"
+          class="h-8 w-8 rounded-full object-cover"
+          [src]="post().topComment.commentCreator.photo"
+        />
+        <div class="min-w-0 flex-1 rounded-2xl bg-white px-3 py-2">
+          <p class="truncate text-xs font-bold text-slate-900">
+            {{ post().topComment.commentCreator.name }}
+          </p>
+          <p class="mt-0.5 whitespace-pre-wrap text-sm text-slate-700">
+            {{ post().topComment.content }}
+          </p>
+        </div>
+      </div>
+      <button
+        (click)="viewAllComments()"
+        class="mt-2 text-xs font-bold text-[#1877f2] hover:underline"
+      >
+        View all comments
+      </button>
+    </div>
+  }
+
+  <!-- Post Comments -->
+  @if (!showTopComment()) {
+    <app-post-comments
+      (deleteCommentEvent)="post().commentsCount -= 1"
+      (createCommentEvent)="post().commentsCount += 1"
+      [postId]="post()._id"
+    ></app-post-comments>
+  }
 </article>
 
 <app-shared-post-modal

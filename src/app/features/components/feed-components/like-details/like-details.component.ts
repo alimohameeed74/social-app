@@ -3,6 +3,7 @@ import {
   input,
   InputSignal,
   OnChanges,
+  OnDestroy,
   OnInit,
   signal,
   SimpleChanges,
@@ -22,7 +23,7 @@ import { LikeCardSkeltonComponent } from '../../../../shared/components/like-car
   styleUrls: ['./like-details.component.css'],
   imports: [RouterLink, InternetConnectionComponent, ErrorComponent, LikeCardSkeltonComponent],
 })
-export class LikeDetailsComponent implements OnInit, OnChanges {
+export class LikeDetailsComponent implements OnInit, OnChanges, OnDestroy {
   postId: InputSignal<string> = input.required();
   likes: WritableSignal<Iuser[]> = signal([]);
   likesLoading: WritableSignal<boolean> = signal(false);
@@ -61,5 +62,9 @@ export class LikeDetailsComponent implements OnInit, OnChanges {
           }
         },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 }

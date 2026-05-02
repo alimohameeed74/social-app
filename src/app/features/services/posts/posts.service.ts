@@ -27,12 +27,13 @@ export class PostsService {
       .pipe(map((res) => res.data.posts));
   }
   getPostComments(postId: string): Observable<Icomment[]> {
-    return this.httpClient.get<Icomment[]>(
-      `${environment.apiURL}/posts/${postId}/comments?page=1&limit=10`,
-      {
-        headers: environment.headers,
-      },
-    );
+    return this.httpClient
+      .get<{
+        success: boolean;
+        message: string;
+        data: { comments: Icomment[] };
+      }>(`${environment.apiURL}/posts/${postId}/comments?page=1&limit=10`)
+      .pipe(map((res) => res.data.comments));
   }
   getPostDetails(postId: string): Observable<Ipost> {
     return this.httpClient

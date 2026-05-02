@@ -1,0 +1,102 @@
+<form [formGroup]="commentForm" (ngSubmit)="createComment()" class="my-3">
+  <div class="flex items-start gap-2">
+    <img [alt]="userData?.name" class="h-9 w-9 rounded-full object-cover" [src]="userData?.photo" />
+    <div
+      class="w-full rounded-2xl border border-slate-400 bg-[#f0f2f5] px-2.5 py-1.5"
+      data-comment-mention-root="true"
+    >
+      <textarea
+        formControlName="content"
+        [placeholder]="`Comment as ${userData?.name}...`"
+        rows="1"
+        class="max-h-35 min-h-10 w-full rounded-2xl resize-none bg-transparent px-2 py-1.5 text-sm leading-5 placeholder:text-slate-500 border-0"
+      ></textarea>
+      @if (
+        getPostContentController?.errors &&
+        getPostContentController?.touched &&
+        selectedImgObj() === null
+      ) {
+        @if (getPostContentController?.hasError('errLength')) {
+          <div
+            class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft"
+            role="alert"
+          >
+            <svg
+              class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <p>Must be at least 2 characters.</p>
+          </div>
+        }
+      }
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center justify-between gap-2 pt-3">
+    <div class="relative flex items-center gap-2">
+      <label
+        for="commentImg"
+        class="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+        ><i class="fa-regular fa-image text-green-500"></i>
+        <span class="hidden sm:inline">Photo/video</span></label
+      >
+      <input
+        (change)="uploadImg($event)"
+        id="commentImg"
+        accept="image/*"
+        class="hidden"
+        type="file"
+      />
+      <button
+        (click)="toggleEmojes()"
+        type="button"
+        class="flex items-center cursor-pointer gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+      >
+        <i class="fa-regular fa-face-smile text-yellow-500"></i>
+        <span class="hidden sm:inline">Feeling/activity</span>
+      </button>
+      <emoji-mart
+        (emojiSelect)="writeEmoji($event)"
+        [class]="showEmojes() ? 'block' : 'hidden'"
+        [style]="{
+          position: 'absolute',
+          top: '40px',
+          left: '-10px',
+          width: '270px',
+          'z-index': 100,
+        }"
+      ></emoji-mart>
+    </div>
+
+    <button
+      [disabled]="(commentForm.invalid && selectedImgObj() === null) || isLoading()"
+      type="submit"
+      class="flex items-center gap-2 rounded-md bg-[#1877f2] px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#166fe5] disabled:opacity-60"
+    >
+      Post<i
+        [class]="isLoading() ? 'fa-spinner fa-spin fa-solid' : 'fa-regular fa-paper-plane'"
+      ></i>
+    </button>
+  </div>
+</form>
+<div class="relative" [class]="imgSrc() ? 'block' : 'hidden'">
+  <button
+    (click)="removeUploadedImg()"
+    class="bg-white absolute top-2 inset-e-2 p-0.5 text-xs rounded-md hover:bg-red-500 hover:text-white text-black"
+  >
+    <i class="fa-solid fa-x cursor-pointer"></i>
+  </button>
+  <img [src]="imgSrc()" class="max-h-60 w-full object-cover rounded-xl" alt="Uploaded Image" />
+</div>
