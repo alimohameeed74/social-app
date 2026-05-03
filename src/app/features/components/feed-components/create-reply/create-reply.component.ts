@@ -1,37 +1,48 @@
-import { AuthService } from './../../../../core/auth/services/auth.service';
-import { Component, OnDestroy, OnInit, output, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+  WritableSignal,
+  InputSignal,
+  input,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { PostsService } from '../../../services/posts/posts.service.js';
-import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { Iuser } from '../../../models/users/Iuser.js';
 import { Subject, takeUntil } from 'rxjs';
+import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
+import { AuthService } from '../../../../core/auth/services/auth.service.js';
+import { Iuser } from '../../../models/users/Iuser.js';
+import { CommentsService } from '../../../services/comments/comments.service.js';
+
 @Component({
-  selector: 'app-create-post',
-  templateUrl: './create-post.component.html',
-  styleUrls: ['./create-post.component.css'],
+  selector: 'app-create-reply',
+  templateUrl: './create-reply.component.html',
+  styleUrls: ['./create-reply.component.css'],
   imports: [PickerComponent, ReactiveFormsModule],
 })
-export class CreatePostComponent implements OnInit, OnDestroy {
-  postCreated = output<string>();
+export class CreateReplyComponent implements OnInit, OnDestroy {
+  replyCreated = output<string>();
   counter: WritableSignal<number> = signal(0);
   userDetails: WritableSignal<Iuser | null> = signal(null);
   showEmojes: WritableSignal<boolean> = signal(false);
-  postForm: FormGroup;
+  replyForm: FormGroup;
   selectedImgObj: WritableSignal<File | null> = signal(null);
   isloading: WritableSignal<boolean> = signal(false);
   imgSrc: WritableSignal<string | ArrayBuffer | null> = signal(null);
+  commentId: InputSignal<string> = input.required();
+  postId: InputSignal<string> = input.required();
   private destroy$ = new Subject<void>();
   constructor(
     private fb: FormBuilder,
-    private postsService: PostsService,
+    private commentService: CommentsService,
     private sweetAlertService: SweetAlertService,
     private authService: AuthService,
   ) {
-    this.postForm = this.fb.group(
+    this.replyForm = this.fb.group(
       {
-        privacy: ['public'],
-        body: [''],
+        content: [''],
       },
       {
         validators: [this.checkBody],
@@ -51,19 +62,19 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   toggleEmojes() {
     this.showEmojes.update((s) => !s);
   }
-  createPost() {
+  createReply() {
     this.showEmojes.set(false);
     this.isloading.set(true);
 
-    this.postsService
-      .createPost(this.createFormData())
+    this.commentService
+      .createReplyOnComment(this.postId(), this.commentId(), this.createFormData())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.isloading.set(false);
           this.sweetAlertService.fireSwal(res?.message, 'success');
           this.counter.update((s) => s + 1);
-          this.postCreated.emit(`post created ${this.counter()}`);
+          this.replyCreated.emit(`reply created ${this.counter()}`);
           this.clearForm();
         },
         error: (err) => {
@@ -71,23 +82,22 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           if (!navigator.onLine) {
             this.sweetAlertService.fireSwal('No Internet', 'error');
           } else {
-            this.sweetAlertService.fireSwal('failed to create post', 'error');
+            this.sweetAlertService.fireSwal('failed to create reply', 'error');
           }
         },
       });
   }
   get getPostBodyController() {
-    return this.postForm.get('body');
+    return this.replyForm.get('content');
   }
 
   writeEmoji(event: any) {
-    const emoji = this.postForm.get('body')?.value + event.emoji.native;
-    this.postForm.get('body')?.setValue(emoji);
+    const emoji = this.replyForm.get('content')?.value + event.emoji.native;
+    this.replyForm.get('content')?.setValue(emoji);
   }
   clearForm() {
-    this.postForm.reset({
-      privacy: 'public',
-      body: '',
+    this.replyForm.reset({
+      content: '',
     });
     this.selectedImgObj.set(null);
     this.imgSrc.set(null);
@@ -103,18 +113,17 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
   createFormData() {
     const formData = new FormData();
-    if (this.postForm.get('body')?.value) {
-      formData.append('body', this.postForm.get('body')?.value);
+    if (this.replyForm.get('content')?.value) {
+      formData.append('content', this.replyForm.get('content')?.value);
     }
     if (this.selectedImgObj()) {
       formData.append('image', this.selectedImgObj()!);
     }
-    formData.append('privacy', this.postForm.get('privacy')?.value);
     return formData;
   }
 
   checkBody(form: AbstractControl) {
-    const body = form.get('body');
+    const body = form.get('content');
 
     if (body?.value.length < 2) {
       body?.setErrors({

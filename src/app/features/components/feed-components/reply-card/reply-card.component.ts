@@ -7,6 +7,7 @@ import {
   OnInit,
   output,
   signal,
+  SimpleChanges,
   WritableSignal,
 } from '@angular/core';
 import { Icomment } from '../../../models/comments/Icomment.js';
@@ -15,25 +16,22 @@ import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { CommentsService } from '../../../services/comments/comments.service.js';
 import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { CommentRepliesComponent } from '../comment-replies/comment-replies.component';
 
 @Component({
-  selector: 'app-comment-card',
-  templateUrl: './comment-card.component.html',
-  styleUrls: ['./comment-card.component.css'],
-  imports: [TimeShortAgoPipe, CommentRepliesComponent],
+  selector: 'app-reply-card',
+  templateUrl: './reply-card.component.html',
+  styleUrls: ['./reply-card.component.css'],
+  imports: [TimeShortAgoPipe],
 })
-export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
-  comment: InputSignal<Icomment> = input.required();
+export class ReplyCardComponent implements OnInit, OnChanges, OnDestroy {
+  reply: InputSignal<Icomment> = input.required();
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
   isLiked: WritableSignal<boolean> = signal(false);
   likeLoading: WritableSignal<boolean> = signal(false);
   deleteLoading: WritableSignal<boolean> = signal(false);
-  showReply: WritableSignal<boolean> = signal(false);
   likeCount: WritableSignal<number> = signal(0);
-  replyCount: WritableSignal<number> = signal(0);
-  deleteCommentEvent = output<string>();
+  deleteReplytEvent = output<string>();
   private destroy$ = new Subject<void>();
   constructor(
     private authService: AuthService,
@@ -42,25 +40,27 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit() {}
+
   ngOnChanges(): void {
-    this.replyCount.set(this.comment().repliesCount!);
-    this.isLiked.set(this.comment().likes.includes(this.userDataId!));
-    this.otherUser.set(this.comment().commentCreator._id !== this.userDataId);
-    this.likeCount.set(this.comment().likes.length);
+    this.isLiked.set(this.reply().likes.includes(this.userDataId!));
+    this.otherUser.set(this.reply().commentCreator._id !== this.userDataId);
+    this.likeCount.set(this.reply().likes.length);
   }
+
   get userDataId() {
     return this.authService.getUserData()?._id;
   }
+
   deleteComment(id: string) {
     this.deleteLoading.set(true);
     this.commentsService
-      .deleteComment(id, this.comment().post)
+      .deleteComment(id, this.reply().post)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.deleteLoading.set(false);
           this.isDeleted.set(true);
-          this.deleteCommentEvent.emit('comment deleted');
+          this.deleteReplytEvent.emit('reply deleted');
         },
         error: (err) => {
           this.deleteLoading.set(false);
@@ -75,7 +75,7 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
   likeUnlikeComment(commentId: string) {
     this.likeLoading.set(true);
     this.commentsService
-      .likeUnlikeComment(this.comment().post, commentId)
+      .likeUnlikeComment(this.reply().post, commentId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: { liked: boolean; likesCount: number }) => {
@@ -92,20 +92,6 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
           }
         },
       });
-  }
-
-  showCommentReplies() {
-    this.showReply.update((s) => !s);
-  }
-  decreaseReplyCount() {
-    this.replyCount.update((s) => s - 1);
-    if (this.replyCount() < 0) {
-      this.replyCount.set(0);
-    }
-  }
-
-  increaseReplyCount() {
-    this.replyCount.update((s) => s + 1);
   }
 
   ngOnDestroy(): void {

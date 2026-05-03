@@ -1,0 +1,63 @@
+<div [class.hidden]="isDeleted()" class="relative flex items-start gap-2 mb-2">
+  <img
+    [alt]="reply().commentCreator.name"
+    class="h-6 w-6 rounded-full object-cover"
+    [src]="reply().commentCreator.photo"
+  />
+  <div class="min-w-0 flex flex-col">
+    <div class="inline-block max-w-full rounded-2xl bg-[#f0f2f5] px-2.5 py-2">
+      <div class="flex justify-between items-center">
+        <p class="text-[11px] font-bold text-slate-900">{{ reply().commentCreator.name }}</p>
+        <div class="relative flex">
+          <button
+            [class.hidden]="otherUser()"
+            [disabled]="deleteLoading()"
+            (click)="deleteComment(reply()._id)"
+            class="cursor-pointer text-xs"
+          >
+            <i
+              [class]="
+                deleteLoading()
+                  ? 'fa-spinner fa-spin fa-solid text-gray-400'
+                  : 'fa-solid fa-trash text-gray-400 hover:text-red-500'
+              "
+            ></i>
+          </button>
+          <button
+            class="rounded-full p-1 text-xs text-slate-500 transition hover:bg-slate-100 hover:text-green-600"
+          >
+            <i class="fa-solid fa-edit"></i>
+          </button>
+        </div>
+      </div>
+      <p class="text-[11px] text-slate-500">{{ reply().createdAt | timeShortAgo }}</p>
+      <p
+        [class.hidden]="!reply().content"
+        class="mt-0.5 whitespace-pre-wrap text-xs text-slate-700"
+      >
+        {{ reply().content }}
+      </p>
+      <img
+        [class.hidden]="!reply().image"
+        alt="Reply"
+        class="mt-1.5 max-h-44 w-full rounded-md object-cover"
+        [src]="reply().image"
+      />
+
+      <div class="mt-1.5 flex items-center justify-between px-1">
+        <button
+          (click)="likeUnlikeComment(reply()._id)"
+          [disabled]="likeLoading()"
+          [class]="isLiked() ? 'text-[#1877f2]' : 'text-slate-500'"
+          class="text-xs font-semibold hover:underline disabled:opacity-60"
+        >
+          @if (likeLoading()) {
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          } @else {
+            Like ({{ likeCount() }})
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

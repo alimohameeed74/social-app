@@ -1,3 +1,4 @@
+import { Icomment } from './../../models/comments/Icomment';
 import { IlikeCommentResponse } from './../../models/comments/Ilike-comment-response';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -42,5 +43,22 @@ export class CommentsService {
         headers: environment.headers,
       },
     );
+  }
+  createReplyOnComment(postId: string, commentId: string, data: FormData): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiURL}/posts/${postId}/comments/${commentId}/replies`,
+      data,
+    );
+  }
+  getCommentReplies(postId: string, commentId: string): Observable<Icomment[]> {
+    return this.httpClient
+      .get<{
+        success: string;
+        message: string;
+        data: {
+          replies: Icomment[];
+        };
+      }>(`${environment.apiURL}/posts/${postId}/comments/${commentId}/replies?page=1&limit=10`)
+      .pipe(map((res) => res.data.replies));
   }
 }

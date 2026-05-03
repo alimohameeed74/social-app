@@ -32,6 +32,12 @@
       >
         {{ comment().content }}
       </p>
+      <img
+        [src]="comment().image"
+        [class.hidden]="!comment().image"
+        alt="Reply"
+        class="mt-1.5 max-h-44 w-full rounded-md object-cover"
+      />
     </div>
     <div class="mt-1.5 flex items-center justify-between px-1">
       <div class="flex items-center gap-4">
@@ -50,10 +56,27 @@
             Like ({{ likeCount() }})
           }
         </button>
-        <button class="text-xs font-semibold hover:underline disabled:opacity-60 text-slate-500">
-          Reply
+        <button
+          (click)="showCommentReplies()"
+          class="text-xs font-semibold hover:underline disabled:opacity-60 text-slate-500"
+        >
+          @if (showReply()) {
+            Hide replies
+          } @else {
+            Reply ({{ replyCount() }})
+          }
         </button>
       </div>
     </div>
   </div>
 </div>
+
+@if (showReply()) {
+  <app-comment-replies
+    [parentCommentName]="comment().commentCreator.name"
+    (deleteReplyEvent)="decreaseReplyCount()"
+    (createReplyEvent)="increaseReplyCount()"
+    [postId]="comment().post"
+    [commentId]="comment()._id"
+  ></app-comment-replies>
+}

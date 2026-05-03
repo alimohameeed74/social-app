@@ -1,0 +1,73 @@
+<div class="p-2 rounded-xl">
+  <form [formGroup]="replyForm" (ngSubmit)="createReply()" class="flex flex-col gap-3 mb-3">
+    <div class="flex justify-start items-center gap-2">
+      <img [src]="userDetails()?.photo" [alt]="userDetails()?.name" class="h-8 w-8 rounded-full" />
+      <h2 class="font-semibold text-xs text-black">{{ userDetails()?.name }}</h2>
+    </div>
+
+    <textarea
+      id="content"
+      name="content"
+      formControlName="content"
+      rows="4"
+      autocomplete="off"
+      class="bg-neutral-secondary-medium border border-default-medium text-sm rounded-base resize-none block w-full p-3.5 shadow-xs placeholder:text-gray-400 placeholder:font-normal placeholder:text-2xs"
+      placeholder="Write a reply..."
+    ></textarea>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 pt-3">
+      <div class="relative flex items-center gap-2">
+        <label
+          for="replyImg"
+          class="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+          ><i class="fa-regular fa-image text-green-500"></i>
+          <span class="hidden sm:inline">Photo/video</span></label
+        >
+        <input
+          (change)="uploadImg($event)"
+          id="replyImg"
+          accept="image/*"
+          class="hidden"
+          type="file"
+        />
+        <button
+          (click)="toggleEmojes()"
+          type="button"
+          class="flex items-center cursor-pointer gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+        >
+          <i class="fa-regular fa-face-smile text-yellow-500"></i>
+          <span class="hidden sm:inline">Feeling/activity</span>
+        </button>
+        <emoji-mart
+          (emojiSelect)="writeEmoji($event)"
+          [class]="showEmojes() ? 'block' : 'hidden'"
+          [style]="{
+            position: 'absolute',
+            top: '40px',
+            left: '-10px',
+            width: '270px',
+            'z-index': 100,
+          }"
+        ></emoji-mart>
+      </div>
+
+      <button
+        [disabled]="(replyForm.invalid && selectedImgObj() === null) || isloading()"
+        type="submit"
+        class="flex items-center gap-2 rounded-xl bg-[#1877f2] px-2 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#166fe5] disabled:opacity-60"
+      >
+        <i [class]="isloading() ? 'fa-solid fa-spinner fa-spin' : 'fa-regular fa-paper-plane'"></i>
+      </button>
+    </div>
+  </form>
+  <div class="relative" [class]="imgSrc() ? 'block' : 'hidden'">
+    <button
+      (click)="removeUploadedImg()"
+      [disabled]="isloading()"
+      class="bg-white absolute top-2 inset-e-2 p-0.5 text-xs rounded-md hover:bg-red-500 hover:text-white text-black disabled:opacity-50"
+    >
+      <i class="fa-solid fa-x cursor-pointer"></i>
+    </button>
+    <img [src]="imgSrc()" class="max-h-60 w-full object-cover rounded-xl" alt="Uploaded Image" />
+  </div>
+</div>

@@ -115,6 +115,8 @@ export class CreateCommentComponent implements OnInit, OnChanges, OnDestroy {
     if (this.selectedImgObj()) {
       this.imgSrc.set(URL.createObjectURL(this.selectedImgObj()!));
     }
+
+    event.target.value = null;
   }
 
   removeUploadedImg() {

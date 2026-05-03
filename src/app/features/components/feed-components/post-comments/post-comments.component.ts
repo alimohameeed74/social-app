@@ -42,7 +42,6 @@ export class PostCommentsComponent implements OnInit, OnChanges, OnDestroy {
   offline: WritableSignal<boolean> = signal(false);
   error: WritableSignal<boolean> = signal(false);
   emptyComments: WritableSignal<boolean> = signal(false);
-  isLoading: WritableSignal<boolean> = signal(false);
   postId: InputSignal<string> = input.required();
   deleteCommentEvent = output<string>();
   createCommentEvent = output<string>();

@@ -1,0 +1,34 @@
+<div class="relative bg-[#f7f8fa] px-4 py-4 ml-5 rounded-b-xl">
+  <span class="absolute bottom-10 left-0 top-1 w-px rounded-full bg-slate-300"></span>
+  <div class="space-y-2">
+    @for (reply of replies(); track $index) {
+      <app-reply-card
+        [reply]="reply"
+        (deleteReplytEvent)="handleDeleteReply($event)"
+      ></app-reply-card>
+    }
+
+    <app-internet-connection [class.hidden]="!offline()"></app-internet-connection>
+    <app-error [class.hidden]="!error()"></app-error>
+    <div class="mb-4" [class]="repliesLoading() ? '' : 'hidden'">
+      @for (skelton of [1, 2]; track $index) {
+        <app-comment-card-skelton></app-comment-card-skelton>
+      }
+    </div>
+    <div [class]="emptyReplies() ? '' : 'hidden'">
+      <p class="text-xs text-slate-500">No replies yet.</p>
+    </div>
+
+    <p [class.hidden]="repliesLoading()" class="mb-1 text-[11px] font-semibold text-slate-500">
+      Replying to {{ parentCommentName() }}.
+    </p>
+
+    <!-- Create Repky Form -->
+    <app-create-reply
+      [class.hidden]="repliesLoading()"
+      (replyCreated)="createReplyEvent.emit('reply created'); getReplies()"
+      [postId]="postId()"
+      [commentId]="commentId()"
+    ></app-create-reply>
+  </div>
+</div>
