@@ -42,7 +42,7 @@
             </span></span
           >
           <div
-            [class]="post().bookmarked ? 'inline-flex' : 'hidden'"
+            [class]="isSaved() ? 'inline-flex' : 'hidden'"
             class="items-center gap-1 rounded-full bg-[#e7f3ff] px-2.5 py-1 text-[11px] font-bold text-[#1877f2]"
           >
             <svg
@@ -74,7 +74,7 @@
           <span [class]="isLoading() ? 'hidden' : ''">
             <!-- unsave -->
             <svg
-              [class]="post().bookmarked || isLoading() ? '' : 'hidden'"
+              [class]="isSaved() || isLoading() ? '' : 'hidden'"
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -89,7 +89,7 @@
 
             <!-- save -->
             <svg
-              [class]="post().bookmarked || isLoading() ? 'hidden' : ''"
+              [class]="isSaved() || isLoading() ? 'hidden' : ''"
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -299,9 +299,14 @@
 </article>
 
 <app-shared-post-modal
-  [type]="type()"
   (sharePostEvent)="sharePost($event)"
   [post]="post()"
   (closeModalEvent)="closeModal()"
   [class.hidden]="!modalOpened()"
 ></app-shared-post-modal>
+
+<app-likes-modal
+  [postId]="post()._id"
+  (closeModalEvent)="closeLikesModal()"
+  [class.hidden]="!likesModalOpened()"
+></app-likes-modal>

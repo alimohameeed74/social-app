@@ -1,0 +1,31 @@
+<div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/65 p-4">
+  <div class="w-full max-w-160 rounded-2xl border border-slate-200 bg-white shadow-2xl">
+    <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+      <h4 class="text-base font-extrabold text-slate-900">People who reacted</h4>
+      <button
+        (click)="closeModal()"
+        type="button"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-60"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-x"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <app-like-details [postId]="postId()"></app-like-details>
+  </div>
+</div>

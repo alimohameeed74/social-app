@@ -20,10 +20,9 @@ import { LikeDetailsComponent } from '../../feed-components/like-details/like-de
   selector: 'app-shared-post-modal',
   templateUrl: './shared-post-modal.component.html',
   styleUrls: ['./shared-post-modal.component.css'],
-  imports: [SharedPostCardComponent, FormsModule, LikeDetailsComponent],
+  imports: [SharedPostCardComponent, FormsModule],
 })
 export class SharedPostModalComponent implements OnInit, OnDestroy {
-  type: InputSignal<string> = input.required();
   closeModalEvent = output<boolean>();
   sharePostEvent = output<boolean>();
   post: InputSignal<Ipost> = input.required();

@@ -1,9 +1,7 @@
 <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/65 p-4">
   <div class="w-full max-w-160 rounded-2xl border border-slate-200 bg-white shadow-2xl">
     <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-      <h4 class="text-base font-extrabold text-slate-900">
-        {{ type() === 'likes' ? 'People who reacted' : 'Share post' }}
-      </h4>
+      <h4 class="text-base font-extrabold text-slate-900">Share post</h4>
       <button
         (click)="closeModal()"
         type="button"
@@ -28,36 +26,32 @@
       </button>
     </div>
 
-    @if (type() === 'Share post') {
-      <div class="space-y-3 p-4">
-        <textarea
-          [(ngModel)]="textBody"
-          placeholder="Say something about this..."
-          rows="3"
-          maxlength="500"
-          class="w-full resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#1877f2] focus:ring-2 focus:ring-[#1877f2]/20"
-        ></textarea>
-      </div>
-      <app-shared-post-card [post]="post()"></app-shared-post-card>
-      <div class="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
-        <button
-          (click)="closeModal()"
-          type="button"
-          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
-        >
-          Cancel</button
-        ><button
-          (click)="sharePost(post()._id)"
-          type="button"
-          [disabled]="isLoading()"
-          class="inline-flex items-center rounded-lg bg-[#1877f2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <i [class]="isLoading() ? 'fa-solid fa-spinner fa-spin' : ''"></i>
-          Shar{{ isLoading() ? 'ing' : 'e' }}
-        </button>
-      </div>
-    } @else if (type() === 'likes') {
-      <app-like-details [postId]="post()._id"></app-like-details>
-    }
+    <div class="space-y-3 p-4">
+      <textarea
+        [(ngModel)]="textBody"
+        placeholder="Say something about this..."
+        rows="3"
+        maxlength="500"
+        class="w-full resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none transition focus:border-[#1877f2] focus:ring-2 focus:ring-[#1877f2]/20"
+      ></textarea>
+    </div>
+    <app-shared-post-card [post]="post()"></app-shared-post-card>
+    <div class="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
+      <button
+        (click)="closeModal()"
+        type="button"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
+      >
+        Cancel</button
+      ><button
+        (click)="sharePost(post()._id)"
+        type="button"
+        [disabled]="isLoading()"
+        class="inline-flex items-center rounded-lg bg-[#1877f2] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <i [class]="isLoading() ? 'fa-solid fa-spinner fa-spin' : ''"></i>
+        Shar{{ isLoading() ? 'ing' : 'e' }}
+      </button>
+    </div>
   </div>
 </div>

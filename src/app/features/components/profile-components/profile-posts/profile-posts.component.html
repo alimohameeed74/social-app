@@ -1,3 +1,73 @@
+<div
+  [class.hidden]="otherUser() || contentLoading()"
+  class="flex flex-wrap items-center justify-between gap-2 mb-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"
+>
+  <div
+    class="grid w-full grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1.5 sm:inline-flex sm:w-auto sm:gap-0"
+  >
+    <button
+      (click)="getPosts()"
+      [class]="
+        !showSavedPosts()
+          ? 'bg-white text-[#1877f2] shadow-sm'
+          : 'text-slate-600 hover:text-slate-900'
+      "
+      class="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-file-text"
+        aria-hidden="true"
+      >
+        <path
+          d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+        ></path>
+        <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+        <path d="M10 9H8"></path>
+        <path d="M16 13H8"></path>
+        <path d="M16 17H8"></path></svg
+      >My Posts</button
+    ><button
+      (click)="getBookmarkedPosts()"
+      [class]="
+        showSavedPosts()
+          ? 'bg-white text-[#1877f2] shadow-sm'
+          : 'text-slate-600 hover:text-slate-900'
+      "
+      class="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition m"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-bookmark"
+        aria-hidden="true"
+      >
+        <path
+          d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"
+        ></path></svg
+      >Saved
+    </button>
+  </div>
+  <span class="rounded-full bg-[#e7f3ff] px-3 py-1 text-xs font-bold text-[#1877f2]">{{
+    postsCount() - deleteCount() <= 0 ? '0' : postsCount() - deleteCount()
+  }}</span>
+</div>
+
 <div [class.hidden]="otherUser()">
   @for (post of posts(); track post._id) {
     <app-profile-post-card (isDeleted)="handlechange()" [post]="post"></app-profile-post-card>

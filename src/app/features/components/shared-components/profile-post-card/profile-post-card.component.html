@@ -4,7 +4,7 @@
 >
   <div class="p-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <div class="flex min-w-0 items-center gap-2">
+      <div class="flex min-w-0 items-start gap-2">
         <img
           [alt]="post().user.name"
           class="h-10 w-10 rounded-full object-cover"
@@ -14,6 +14,7 @@
           <p class="truncate text-sm font-extrabold text-slate-900">{{ post().user.name }}</p>
           <p class="truncate text-xs font-semibold text-slate-500">@{{ post().user.username }}</p>
         </div>
+
         <div
           [class]="post().bookmarked ? 'inline-flex' : 'hidden'"
           class="items-center gap-1 rounded-full bg-[#e7f3ff] px-2.5 py-1 text-[11px] font-bold text-[#1877f2]"
@@ -54,6 +55,43 @@
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
+        </button>
+        <button
+          (click)="toggleSavePost(post()._id)"
+          [disabled]="isLoading_()"
+          class="flex w-full items-center gap-2 px-2 rounded-md py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+        >
+          <span [class]="isLoading_() ? 'hidden' : ''">
+            <!-- unsave -->
+            <svg
+              [class]="post().bookmarked || isLoading_() ? '' : 'hidden'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              <line x1="3" y1="3" x2="21" y2="21"></line>
+            </svg>
+
+            <!-- save -->
+            <svg
+              [class]="post().bookmarked || isLoading_() ? 'hidden' : ''"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </span>
+          <i [class]="isLoading_() ? 'fa-solid fa-spin fa-spinner' : 'hidden'"></i>
         </button>
         <button
           (click)="deletePost(post()._id)"

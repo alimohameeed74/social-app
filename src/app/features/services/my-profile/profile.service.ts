@@ -30,6 +30,17 @@ export class ProfileService {
       }>(`${environment.apiURL}/users/${userId}/profile`)
       .pipe(map((res) => res.data));
   }
+  getBookmarkedPosts(): Observable<Ipost[]> {
+    return this.httpClient
+      .get<{
+        sucess: string;
+        message: string;
+        data: {
+          bookmarks: Ipost[];
+        };
+      }>(`${environment.apiURL}/users/bookmarks`)
+      .pipe(map((res) => res.data.bookmarks));
+  }
   getMyposts(): Observable<Ipost[]> {
     return this.httpClient
       .get<{

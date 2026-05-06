@@ -30,6 +30,7 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
   otherUser: WritableSignal<boolean> = signal(false);
   contentLoading: WritableSignal<boolean> = signal(false);
   emptyPosts: WritableSignal<boolean> = signal(false);
+  showSavedPosts: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
   postsCount: WritableSignal<number> = signal(0);
   deleteCount: WritableSignal<number> = signal(0);
@@ -52,7 +53,11 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
   }
 
   getPosts() {
+    this.showSavedPosts.set(false);
+    this.posts.set([]);
     this.contentLoading.set(true);
+    this.emptyPosts.set(false);
+
     this.profileService
       .getMyposts()
       .pipe(takeUntil(this.destroy$))
@@ -79,7 +84,9 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
   }
 
   getUserPosts(id: string) {
+    this.posts.set([]);
     this.contentLoading.set(true);
+    this.emptyPosts.set(false);
 
     this.profileService
       .getUserposts(id)
@@ -91,6 +98,38 @@ export class ProfilePostsComponent implements OnInit, OnDestroy {
             this.emptyPosts.set(true);
           } else {
             this.posts.set(res);
+          }
+        },
+        error: (err) => {
+          this.contentLoading.set(false);
+          this.posts.set([]);
+          if (!navigator.onLine) {
+            this.offline.set(true);
+          } else {
+            this.error.set(true);
+          }
+        },
+      });
+  }
+
+  getBookmarkedPosts() {
+    this.showSavedPosts.set(true);
+    this.emptyPosts.set(false);
+
+    this.posts.set([]);
+    this.contentLoading.set(true);
+    this.profileService
+      .getBookmarkedPosts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: Ipost[]) => {
+          this.contentLoading.set(false);
+          this.postsCount.set(res.length);
+
+          if (res.length === 0) {
+            this.emptyPosts.set(true);
+          } else {
+            this.posts.set(res.reverse());
           }
         },
         error: (err) => {

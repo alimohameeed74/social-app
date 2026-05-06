@@ -19,6 +19,7 @@ import { TimeShortAgoPipe } from '../../../../shared/pipes/time-short-age/timeSh
 import { SharedPostCardComponent } from '../shared-post-card/shared-post-card.component';
 import { SharedPostModalComponent } from '../shared-post-modal/shared-post-modal.component';
 import { PostCommentsComponent } from '../../feed-components/post-comments/post-comments.component';
+import { LikesModalComponent } from '../../feed-components/likes-modal/likes-modal.component';
 
 @Component({
   selector: 'app-feed-post-card',
@@ -30,19 +31,21 @@ import { PostCommentsComponent } from '../../feed-components/post-comments/post-
     SharedPostCardComponent,
     SharedPostModalComponent,
     PostCommentsComponent,
+    LikesModalComponent,
   ],
 })
 export class FeedPostCardComponent implements OnInit, OnChanges {
-  type: WritableSignal<string> = signal('Share post');
   post: InputSignal<Ipost> = input.required();
   isLoading: WritableSignal<boolean> = signal(false);
   deleteLoading: WritableSignal<boolean> = signal(false);
   modalOpened: WritableSignal<boolean> = signal(false);
+  likesModalOpened: WritableSignal<boolean> = signal(false);
   likeLoading: WritableSignal<boolean> = signal(false);
   isLiked: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
+  isSaved: WritableSignal<boolean> = signal(false);
   deletePostEvent = output<string>();
   sharedPostEvent = output<string>();
   showTopComment: WritableSignal<boolean> = signal(true);
@@ -58,6 +61,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.isLiked.set(this.post().likes.includes(this.userDataId!));
+    this.isSaved.set(this.post().bookmarked);
     this.otherUser.set(this.post().user._id !== this.userDataId);
   }
 
@@ -99,7 +103,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
       .subscribe({
         next: (res: boolean) => {
           this.isLoading.set(false);
-          this.post().bookmarked = res;
+          this.isSaved.set(res);
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -149,15 +153,14 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
     this.sharedPostEvent.emit('post shared');
   }
   openShareModal() {
-    this.type.set('Share post');
-    this.openModal();
-  }
-  openModal() {
     this.modalOpened.set(true);
   }
+
   openLikeModal() {
-    this.type.set('likes');
-    this.openModal();
+    this.likesModalOpened.set(true);
+  }
+  closeLikesModal() {
+    this.likesModalOpened.set(false);
   }
 
   viewAllComments() {
