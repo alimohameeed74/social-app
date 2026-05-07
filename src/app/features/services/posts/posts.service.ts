@@ -79,9 +79,22 @@ export class PostsService {
       }>(`${environment.apiURL}/posts/${postId}/likes?page=1&limit=10`)
       .pipe(map((res) => res.data.likes));
   }
-  // updatePost(postId: string, data: FormData): Observable<any> {
-  //   return this.httpClient.put(`${environment.apiURL}/posts/${postId}`, data);
-  // }
+  updatePost(postId: string, data: FormData): Observable<{ post: Ipost; message: string }> {
+    return this.httpClient
+      .put<{
+        seccess: string;
+        message: string;
+        data: { post: Ipost };
+      }>(`${environment.apiURL}/posts/${postId}`, data)
+      .pipe(
+        map((res) => {
+          return {
+            post: res.data.post,
+            message: res.message,
+          };
+        }),
+      );
+  }
 
   sharePost(postId: string, data: { body: string }): Observable<string> {
     if (data.body === '') {

@@ -2,14 +2,14 @@
   <div class="flex items-start gap-2">
     <img [alt]="userData?.name" class="h-9 w-9 rounded-full object-cover" [src]="userData?.photo" />
     <div
-      class="w-full rounded-2xl border border-slate-400 bg-[#f0f2f5] px-2.5 py-1.5"
+      class="w-full rounded-xl border border-slate-400 bg-[#f0f2f5] px-2.5 py-1.5"
       data-comment-mention-root="true"
     >
       <textarea
         formControlName="content"
         [placeholder]="`Comment as ${userData?.name}...`"
         rows="1"
-        class="max-h-35 min-h-10 w-full rounded-2xl resize-none bg-transparent px-2 py-1.5 text-sm leading-5 placeholder:text-slate-500 border-0"
+        class="max-h-35 min-h-10 w-full rounded-xl resize-none bg-transparent px-2 py-1.5 text-sm leading-5 placeholder:text-slate-500 border-0"
       ></textarea>
       @if (
         getPostContentController?.errors &&

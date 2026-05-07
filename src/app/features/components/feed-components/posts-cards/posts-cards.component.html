@@ -1,6 +1,10 @@
 <div>
   @for (post of posts(); track post._id) {
-    <app-feed-post-card (sharedPostEvent)="getPosts()" [post]="post"></app-feed-post-card>
+    <app-feed-post-card
+      (updatePostEvent)="getPosts()"
+      (sharedPostEvent)="getPosts()"
+      [post]="post"
+    ></app-feed-post-card>
   }
 </div>
 

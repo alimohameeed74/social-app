@@ -8,7 +8,7 @@
           id="privacy"
           name="privacy"
           formControlName="privacy"
-          class="w-full p-1.5 bg-neutral-secondary-medium border border-default-medium text-sm rounded-[10px]"
+          class="w-full p-2 bg-neutral-secondary-medium border border-default-medium text-sm rounded-[10px]"
         >
           <option selected value="public">Public</option>
           <option value="following">Following</option>
@@ -23,7 +23,7 @@
       formControlName="body"
       rows="4"
       autocomplete="off"
-      class="bg-neutral-secondary-medium border border-default-medium text-sm rounded-base block w-full p-3.5 shadow-xs placeholder:text-gray-400 placeholder:font-normal"
+      class="bg-neutral-secondary-medium border resize-none border-default-medium text-sm rounded-base block w-full p-3.5 shadow-xs placeholder:text-gray-400 placeholder:font-normal"
       [placeholder]="`What's on your mind, ${userDetails()?.name?.split(' ')?.[0]}?`"
     ></textarea>
     @if (
@@ -108,7 +108,7 @@
       [disabled]="isloading()"
       class="bg-white absolute top-2 inset-e-2 p-0.5 text-xs rounded-md hover:bg-red-500 hover:text-white text-black disabled:opacity-50"
     >
-      <i class="fa-solid fa-x cursor-pointer"></i>
+      <i class="fa-solid fa-trash cursor-pointer"></i>
     </button>
     <img [src]="imgSrc()" class="max-h-60 w-full object-cover rounded-xl" alt="Uploaded Image" />
   </div>

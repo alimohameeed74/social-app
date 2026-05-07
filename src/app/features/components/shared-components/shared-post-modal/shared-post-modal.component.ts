@@ -14,7 +14,6 @@ import { Ipost } from '../../../models/posts/Ipost.js';
 import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
 import { FormsModule } from '@angular/forms';
-import { LikeDetailsComponent } from '../../feed-components/like-details/like-details.component';
 
 @Component({
   selector: 'app-shared-post-modal',

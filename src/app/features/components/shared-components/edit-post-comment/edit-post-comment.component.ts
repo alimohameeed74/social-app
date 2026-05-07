@@ -1,19 +1,36 @@
-import { AuthService } from './../../../../core/auth/services/auth.service';
-import { Component, OnDestroy, OnInit, output, signal, WritableSignal } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  effect,
+  input,
+  InputSignal,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { Iuser } from '../../../models/users/Iuser.js';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { Iuser } from '../../../models/users/Iuser.js';
-import { Subject, takeUntil } from 'rxjs';
+import { Ipost } from '../../../models/posts/Ipost.js';
+
 @Component({
-  selector: 'app-create-post',
-  templateUrl: './create-post.component.html',
-  styleUrls: ['./create-post.component.css'],
+  selector: 'app-edit-post-comment',
+  templateUrl: './edit-post-comment.component.html',
+  styleUrls: ['./edit-post-comment.component.css'],
   imports: [PickerComponent, ReactiveFormsModule],
 })
-export class CreatePostComponent implements OnInit, OnDestroy {
-  postCreated = output<string>();
+export class EditPostCommentComponent implements OnInit, OnChanges, OnDestroy {
+  postData: InputSignal<{ id: string; privacy: string; body: string; image: string }> =
+    input.required();
+  closeModalEvent = output<string>();
+  private destroy$ = new Subject<void>();
+  postUpdated = output<Ipost>();
   counter: WritableSignal<number> = signal(0);
   userDetails: WritableSignal<Iuser | null> = signal(null);
   showEmojes: WritableSignal<boolean> = signal(false);
@@ -21,7 +38,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   selectedImgObj: WritableSignal<File | null> = signal(null);
   isloading: WritableSignal<boolean> = signal(false);
   imgSrc: WritableSignal<string | ArrayBuffer | null> = signal(null);
-  private destroy$ = new Subject<void>();
   constructor(
     private fb: FormBuilder,
     private postsService: PostsService,
@@ -37,12 +53,22 @@ export class CreatePostComponent implements OnInit, OnDestroy {
         validators: [this.checkBody],
       },
     );
+
+    effect(() => {
+      this.postForm.patchValue({
+        privacy: this.postData().privacy,
+        body: this.postData().body,
+      });
+      this.imgSrc.set(this.postData().image);
+    });
   }
 
   ngOnInit() {
     this.userDetails.set(this.userData);
     this.clearForm();
   }
+
+  ngOnChanges(): void {}
 
   get userData() {
     return this.authService.getUserData();
@@ -51,18 +77,18 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   toggleEmojes() {
     this.showEmojes.update((s) => !s);
   }
-  createPost() {
+  updatePost() {
     this.showEmojes.set(false);
     this.isloading.set(true);
+
     this.postsService
-      .createPost(this.createFormData())
+      .updatePost(this.postData().id, this.createFormData())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res) => {
+        next: (res: { post: Ipost; message: string }) => {
           this.isloading.set(false);
           this.sweetAlertService.fireSwal(res?.message, 'success');
-          this.counter.update((s) => s + 1);
-          this.postCreated.emit(`post created ${this.counter()}`);
+          this.postUpdated.emit(res.post);
           this.clearForm();
         },
         error: (err) => {
@@ -70,7 +96,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           if (!navigator.onLine) {
             this.sweetAlertService.fireSwal('No Internet', 'error');
           } else {
-            this.sweetAlertService.fireSwal('failed to create post', 'error');
+            this.sweetAlertService.fireSwal('failed to update post', 'error');
           }
         },
       });
@@ -133,5 +159,11 @@ export class CreatePostComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  closeModal() {
+    this.clearForm();
+    this.destroy$.next();
+    this.closeModalEvent.emit('close edit modal');
   }
 }

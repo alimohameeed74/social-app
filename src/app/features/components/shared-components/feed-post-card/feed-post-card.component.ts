@@ -20,6 +20,7 @@ import { SharedPostCardComponent } from '../shared-post-card/shared-post-card.co
 import { SharedPostModalComponent } from '../shared-post-modal/shared-post-modal.component';
 import { PostCommentsComponent } from '../../feed-components/post-comments/post-comments.component';
 import { LikesModalComponent } from '../../feed-components/likes-modal/likes-modal.component';
+import { EditPostCommentComponent } from '../edit-post-comment/edit-post-comment.component';
 
 @Component({
   selector: 'app-feed-post-card',
@@ -32,10 +33,12 @@ import { LikesModalComponent } from '../../feed-components/likes-modal/likes-mod
     SharedPostModalComponent,
     PostCommentsComponent,
     LikesModalComponent,
+    EditPostCommentComponent,
   ],
 })
 export class FeedPostCardComponent implements OnInit, OnChanges {
   post: InputSignal<Ipost> = input.required();
+  copyPost: WritableSignal<Ipost | null> = signal(null);
   isLoading: WritableSignal<boolean> = signal(false);
   deleteLoading: WritableSignal<boolean> = signal(false);
   modalOpened: WritableSignal<boolean> = signal(false);
@@ -46,6 +49,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
   isSaved: WritableSignal<boolean> = signal(false);
+  hideEditModal_: WritableSignal<boolean> = signal(false);
   deletePostEvent = output<string>();
   sharedPostEvent = output<string>();
   showTopComment: WritableSignal<boolean> = signal(true);
@@ -63,6 +67,7 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
     this.isLiked.set(this.post().likes.includes(this.userDataId!));
     this.isSaved.set(this.post().bookmarked);
     this.otherUser.set(this.post().user._id !== this.userDataId);
+    this.copyPost.set(this.post());
   }
 
   get userDataId() {
@@ -165,5 +170,17 @@ export class FeedPostCardComponent implements OnInit, OnChanges {
 
   viewAllComments() {
     this.showTopComment.update((s) => !s);
+  }
+
+  closeEditModal() {
+    this.hideEditModal_.set(false);
+  }
+  showEditModal() {
+    this.hideEditModal_.set(true);
+  }
+
+  handelUpdatedPost(event: Ipost) {
+    this.copyPost.set(event);
+    this.closeEditModal();
   }
 }
