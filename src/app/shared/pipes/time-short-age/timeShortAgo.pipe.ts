@@ -8,9 +8,10 @@ export class TimeShortAgoPipe implements PipeTransform {
     const now = new Date().getTime();
     const postTime = new Date(dateString).getTime();
 
-    const diffInSeconds = Math.floor((now - postTime) / 1000);
+    let diffInSeconds = Math.floor((now - postTime) / 1000);
 
     if (diffInSeconds < 60) {
+      if (diffInSeconds < 0) diffInSeconds = 0;
       return `${diffInSeconds}s`;
     }
 

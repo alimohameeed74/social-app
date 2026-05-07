@@ -35,15 +35,7 @@ export class CommentsService {
         }),
       );
   }
-  updatecomment(postId: string, commentId: string, data: string): Observable<any> {
-    return this.httpClient.put(
-      `${environment.apiURL}/posts/${postId}/comments/${commentId}/like`,
-      data,
-      {
-        headers: environment.headers,
-      },
-    );
-  }
+
   createReplyOnComment(postId: string, commentId: string, data: FormData): Observable<any> {
     return this.httpClient.post(
       `${environment.apiURL}/posts/${postId}/comments/${commentId}/replies`,
@@ -60,5 +52,25 @@ export class CommentsService {
         };
       }>(`${environment.apiURL}/posts/${postId}/comments/${commentId}/replies?page=1&limit=10`)
       .pipe(map((res) => res.data.replies));
+  }
+  editComment(
+    postId: string,
+    commentId: string,
+    data: FormData,
+  ): Observable<{ comment: Icomment; message: string }> {
+    return this.httpClient
+      .put<{
+        message: string;
+        success: string;
+        data: { comment: Icomment };
+      }>(`${environment.apiURL}/posts/${postId}/comments/${commentId}`, data)
+      .pipe(
+        map((res) => {
+          return {
+            comment: res.data.comment,
+            message: res.message,
+          };
+        }),
+      );
   }
 }

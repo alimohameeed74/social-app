@@ -11,30 +11,39 @@
           <p class="text-xs font-bold text-slate-900">{{ comment().commentCreator.name }}</p>
           <p class="text-xs text-slate-500">@{{ comment().commentCreator.username }}</p>
         </div>
-        <button
-          [class.hidden]="otherUser()"
-          [disabled]="deleteLoading()"
-          (click)="deleteComment(comment()._id)"
-          class="cursor-pointer text-xs"
-        >
-          <i
-            [class]="
-              deleteLoading()
-                ? 'fa-spinner fa-spin fa-solid text-gray-400'
-                : 'fa-solid fa-trash text-gray-400 hover:text-red-500'
-            "
-          ></i>
-        </button>
+        <div class="flex">
+          <button
+            [class.hidden]="otherUser()"
+            [disabled]="deleteLoading()"
+            (click)="deleteComment(comment()._id)"
+            class="cursor-pointer text-xs me-1"
+          >
+            <i
+              [class]="
+                deleteLoading()
+                  ? 'fa-spinner fa-spin fa-solid text-gray-400'
+                  : 'fa-solid fa-trash text-gray-400 hover:text-red-500'
+              "
+            ></i>
+          </button>
+          <button
+            [class.hidden]="otherUser()"
+            (click)="showEditCommentModal.set(true)"
+            class="cursor-pointer text-xs"
+          >
+            <i class="fa-solid fa-edit text-gray-400 hover:text-green-500"></i>
+          </button>
+        </div>
       </div>
       <p
-        [class]="comment().content ? 'block' : 'hidden'"
+        [class]="copyComment()!.content ? 'block' : 'hidden'"
         class="mt-1 whitespace-pre-wrap text-sm text-slate-800"
       >
-        {{ comment().content }}
+        {{ copyComment()!.content }}
       </p>
       <img
-        [src]="comment().image"
-        [class.hidden]="!comment().image"
+        [src]="copyComment()!.image"
+        [class.hidden]="!copyComment()!.image"
         alt="Reply"
         class="mt-1.5 max-h-44 w-full rounded-md object-cover"
       />
@@ -79,4 +88,17 @@
     [postId]="comment().post"
     [commentId]="comment()._id"
   ></app-comment-replies>
+}
+
+@if (showEditCommentModal()) {
+  <app-edit-comment
+    (closeModalEvent)="showEditCommentModal.set(false)"
+    [commentData]="{
+      content: comment().content,
+      image: comment().image,
+      commentId: comment()._id,
+      postId: comment().post,
+    }"
+    (commentUpdated)="handleUpdateComment($event)"
+  ></app-edit-comment>
 }

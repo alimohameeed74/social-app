@@ -16,15 +16,17 @@ import { CommentsService } from '../../../services/comments/comments.service.js'
 import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
 import { CommentRepliesComponent } from '../comment-replies/comment-replies.component';
+import { EditCommentComponent } from '../../shared-components/edit-comment/edit-comment.component';
 
 @Component({
   selector: 'app-comment-card',
   templateUrl: './comment-card.component.html',
   styleUrls: ['./comment-card.component.css'],
-  imports: [TimeShortAgoPipe, CommentRepliesComponent],
+  imports: [TimeShortAgoPipe, CommentRepliesComponent, EditCommentComponent],
 })
 export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
   comment: InputSignal<Icomment> = input.required();
+  copyComment: WritableSignal<Icomment | null> = signal(null);
   otherUser: WritableSignal<boolean> = signal(false);
   isDeleted: WritableSignal<boolean> = signal(false);
   isLiked: WritableSignal<boolean> = signal(false);
@@ -34,6 +36,7 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
   likeCount: WritableSignal<number> = signal(0);
   replyCount: WritableSignal<number> = signal(0);
   deleteCommentEvent = output<string>();
+  showEditCommentModal: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
   constructor(
     private authService: AuthService,
@@ -43,6 +46,7 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {}
   ngOnChanges(): void {
+    this.copyComment.set(this.comment());
     this.replyCount.set(this.comment().repliesCount!);
     this.isLiked.set(this.comment().likes.includes(this.userDataId!));
     this.otherUser.set(this.comment().commentCreator._id !== this.userDataId);
@@ -110,5 +114,10 @@ export class CommentCardComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  handleUpdateComment(event: Icomment) {
+    this.copyComment.set(event);
+    this.showEditCommentModal.set(false);
   }
 }
