@@ -12,10 +12,7 @@ import {
 } from '@angular/core';
 import { PostsService } from '../../../services/posts/posts.service.js';
 import { Icomment } from '../../../models/comments/Icomment.js';
-import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
-import { TimeService } from '../../../../core/services/time/time.service.js';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommentCardComponent } from '../comment-card/comment-card.component';
 import { Subject, take, takeUntil } from 'rxjs';
 import { InternetConnectionComponent } from '../../../../shared/components/internet-connection/internet-connection.component';
