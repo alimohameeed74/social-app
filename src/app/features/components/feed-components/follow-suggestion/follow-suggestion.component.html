@@ -12,7 +12,7 @@
   </h2>
   <div
     [class]="isLoading() || offline() || error() ? 'hidden' : ''"
-    class="h-100 xl:h-140 scrollbar-hide overflow-y-auto"
+    class="h-80 xl:h-120 scrollbar-hide overflow-y-auto"
   >
     @for (suggestion of suggestions(); track $index) {
       <app-suggestion-card [suggestion]="suggestion"></app-suggestion-card>
