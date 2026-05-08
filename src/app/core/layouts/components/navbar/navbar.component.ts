@@ -27,7 +27,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userDetails.set(this.userData);
 
-    this.interval$.subscribe(() => {
+    this.interval$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getNotifications();
     });
   }
