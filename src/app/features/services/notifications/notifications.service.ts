@@ -40,9 +40,15 @@ export class NotificationsService {
   makeAllNotificationAsRead(): Observable<any> {
     return this.httpClient.patch(`${environment.apiURL}/notifications/read-all`, {});
   }
-  getNotificationsCount(): Observable<any> {
-    return this.httpClient.get(`${environment.apiURL}/notifications/unread-count`, {
-      headers: environment.headers,
-    });
+  getNotificationsCount(): Observable<number> {
+    return this.httpClient
+      .get<{
+        success: boolean;
+        message: string;
+        data: {
+          unreadCount: number;
+        };
+      }>(`${environment.apiURL}/notifications/unread-count`)
+      .pipe(map((res) => res.data.unreadCount));
   }
 }

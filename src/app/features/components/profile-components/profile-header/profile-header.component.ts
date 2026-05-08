@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  output,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -14,6 +15,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service.js';
 import { User } from '../../../models/users/Ianother-user-profile.js';
 import { Subject, takeUntil } from 'rxjs';
 import { SweetAlertService } from '../../../../core/services/sweet-alert/sweet-alert.service.js';
+import { ProfileService } from '../../../services/my-profile/profile.service.js';
 
 @Component({
   selector: 'app-profile-header',
@@ -26,12 +28,18 @@ export class ProfileHeaderComponent implements OnInit, OnChanges, OnDestroy {
   isFollowing: InputSignal<boolean | null> = input.required();
   followUser: WritableSignal<boolean | null> = signal(false);
   isLoading: WritableSignal<boolean> = signal(false);
+  changeLoading: WritableSignal<boolean> = signal(false);
   private destroy$ = new Subject<void>();
+  imgSrc: WritableSignal<string | ArrayBuffer | null> = signal(null);
+  selectedImgObj: WritableSignal<File | null> = signal(null);
+  showConfirmationModal: WritableSignal<boolean> = signal(false);
+  changedProfilePhotoEvent = output<string>();
   constructor(
     private activatedRoute: ActivatedRoute,
     private followSuggestionsService: FollowSuggestionsService,
     private authService: AuthService,
     private sweetAlertService: SweetAlertService,
+    private profileService: ProfileService,
   ) {}
 
   ngOnInit() {}
@@ -67,5 +75,60 @@ export class ProfileHeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  holdUserPhoto(event: any) {
+    this.selectedImgObj.set(event?.target?.files[0]);
+    if (this.selectedImgObj()) {
+      this.imgSrc.set(URL.createObjectURL(this.selectedImgObj()!));
+      this.showConfirmationModal.set(true);
+    }
+
+    event.target.value = null;
+  }
+
+  get userData() {
+    return this.authService.getUserData();
+  }
+
+  createFormData() {
+    const formData = new FormData();
+
+    if (this.selectedImgObj()) {
+      formData.append('photo', this.selectedImgObj()!);
+    }
+    return formData;
+  }
+
+  updatedProfilePhoto() {
+    this.changeLoading.set(true);
+    this.profileService
+      .uploadProfilePhoto(this.createFormData())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: { message: string; photo: string }) => {
+          this.changeLoading.set(false);
+          this.sweetAlertService.fireSwal(res.message, 'success');
+          this.authService.holdUserData({ ...this.userData!, photo: res.photo });
+          this.changedProfilePhotoEvent.emit('profile photo changed');
+          localStorage.setItem('userData', JSON.stringify(this.authService.getUserData()));
+          this.closeModal();
+        },
+        error: (err) => {
+          this.changeLoading.set(false);
+          if (!navigator.onLine) {
+            this.sweetAlertService.fireSwal('No Internet', 'error');
+          } else {
+            this.sweetAlertService.fireSwal(err?.message, 'error');
+          }
+        },
+      });
+  }
+
+  closeModal() {
+    this.imgSrc.set('');
+    this.selectedImgObj.set(null);
+    if (this.changeLoading()) this.destroy$.next();
+    this.showConfirmationModal.set(false);
   }
 }

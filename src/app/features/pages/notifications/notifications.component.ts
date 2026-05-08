@@ -1,12 +1,13 @@
 import { Inotification } from '../../models/notification/Inotification.js';
 import { NotificationsService } from './../../services/notifications/notifications.service';
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, OnInit, signal, viewChild, WritableSignal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationCardComponent } from '../../components/notification-components/notification-card/notification-card.component';
 import { InternetConnectionComponent } from '../../../shared/components/internet-connection/internet-connection.component';
 import { ErrorComponent } from '../../../shared/components/error/error.component';
 import { NotificationSkeltonComponent } from '../../../shared/components/notification-skelton/notification-skelton.component';
 import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service.js';
+import { NavbarComponent } from '../../../core/layouts/components/navbar/navbar.component.js';
 
 @Component({
   selector: 'app-notifications',

@@ -10,6 +10,7 @@
     <app-profile-header
       [accoutUser]="profileDetails()"
       [isFollowing]="isFollowing()"
+      (changedProfilePhotoEvent)="getMyProfile()"
     ></app-profile-header>
 
     <!-- Posts -->

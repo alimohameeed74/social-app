@@ -5,7 +5,7 @@ import { AuthService } from '../../../auth/services/auth.service.js';
 import { Iuser } from '../../../../features/models/users/Iuser.js';
 import { ProfileService } from '../../../../features/services/my-profile/profile.service.js';
 import { NotificationsService } from '../../../../features/services/notifications/notifications.service.js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, interval, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -17,7 +17,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   userDetails: WritableSignal<Iuser | null> = signal(null);
   toggler: WritableSignal<boolean> = signal(false);
   notificationsCount: WritableSignal<number> = signal(0);
-  interval: any;
+  private destroy$ = new Subject<void>();
+  interval$ = interval(30000);
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -25,10 +26,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.userDetails.set(this.userData);
-    // this.getNotifications();
-    // this.interval = setInterval(() => {
-    //   this.getNotifications();
-    // }, 10000);
+
+    this.interval$.subscribe(() => {
+      this.getNotifications();
+    });
   }
   toggle() {
     this.toggler.update((s) => !s);
@@ -42,21 +43,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getNotifications() {
-    this.notificationsService.getNotificationsCount().subscribe({
-      next: (res: any) => {
-        const count = res?.data?.unreadCount;
-        if (this.notificationsCount() !== count) {
-          this.notificationsCount.set(res?.data?.unreadCount);
-        }
-      },
-      error: (err) => {
-        this.notificationsCount.set(0);
-        console.log(err);
-      },
-    });
+    this.notificationsService
+      .getNotificationsCount()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: number) => {
+          this.notificationsCount.set(res);
+        },
+        error: (err) => {
+          this.notificationsCount.set(0);
+          console.log(err);
+        },
+      });
   }
   ngOnDestroy(): void {
-    clearInterval(this.interval);
+    this.destroy$.next();
   }
 
   get userData() {

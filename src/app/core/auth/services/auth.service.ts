@@ -31,6 +31,7 @@ export class AuthService {
   holdUserData(data: Iuser) {
     this.userData.set(data);
   }
+
   getUserData(): Iuser | null {
     return this.userData();
   }

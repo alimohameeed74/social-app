@@ -94,10 +94,10 @@
   <app-edit-comment
     (closeModalEvent)="showEditCommentModal.set(false)"
     [commentData]="{
-      content: comment().content,
-      image: comment().image,
-      commentId: comment()._id,
-      postId: comment().post,
+      content: copyComment()!.content,
+      image: copyComment()!.image,
+      commentId: copyComment()!._id,
+      postId: copyComment()!.post,
     }"
     (commentUpdated)="handleUpdateComment($event)"
   ></app-edit-comment>

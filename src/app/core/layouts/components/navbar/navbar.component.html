@@ -43,10 +43,11 @@
             <i class="fa-regular fa-bell sm:me-1 m-0"></i>
             <span class="hidden sm:inline">Notifications</span>
 
-            <i
-              [class]="notificationsCount() === 0 ? 'hidden!' : 'inline'"
-              class="fa-solid fa-circle text-red-600 text-[6px] absolute top-3 left-6"
-            ></i>
+            <span
+              [class.hidden]="notificationsCount() === 0"
+              class="absolute left-6 top-1 w-3 h-3 text-2xs flex justify-center items-center rounded-2xl bg-red-600 text-white"
+              >{{ notificationsCount() }}</span
+            >
           </a>
         </li>
       </ul>
@@ -57,10 +58,10 @@
     >
       <img
         class="h-8 w-8 rounded-full object-cover me-1"
-        [src]="userDetails()?.photo"
+        [src]="userData?.photo"
         alt="Account Photo"
       />
-      <span class="sm:me-1 m-0 hidden md:inline">{{ userDetails()?.name }}</span>
+      <span class="sm:me-1 m-0 hidden md:inline">{{ userData?.name }}</span>
       <i class="fa-solid fa-bars"></i>
       <div
         class="absolute top-full inset-e-0 w-50 font-semibold mt-3 p-3 flex-col text-start border border-gray-200 rounded-xl bg-white text-[12px]"
